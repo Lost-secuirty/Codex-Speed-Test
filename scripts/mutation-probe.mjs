@@ -80,10 +80,14 @@ const MUTATIONS = [
     replace: 'return raw as unknown as T;',
   },
   {
-    name: 'storage: failed parse no longer falls back',
+    // NOT `throw` here — a throw inside the try lands in the catch and
+    // returns the same fallback (equivalent mutant; caught at scaffold
+    // time, docs/LEARNINGS.md 2026-06-12). Skipping the null-guard makes
+    // JSON.parse(null) return null instead of the fallback — observable.
+    name: 'storage: missing-key guard skipped (parses null)',
     file: 'src/lib/storage.ts',
-    find: 'return fallback;',
-    replace: 'throw new Error("boom");',
+    find: 'if (raw === null) return fallback;',
+    replace: 'if (false) return fallback;',
   },
 ];
 
