@@ -10,4 +10,11 @@ export interface PrototypeEntry {
   description: string;
 }
 
-export const prototypes: PrototypeEntry[] = [];
+export const prototypes: PrototypeEntry[] = [
+  {
+    id: 'reel-spin-shell',
+    title: 'Reel Spin Shell',
+    description:
+      'The scaffold proof: 3 procedural reels, GSAP spin over pure reel-math, sound hooks, visual baseline.',
+  },
+];
