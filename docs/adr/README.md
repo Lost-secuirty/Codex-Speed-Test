@@ -23,3 +23,4 @@ scaffolds it).
 | [0015](0015-audio-cue-model-seam.md) | Audio: pure cue-model + thin playback seam, Shepard, ≥120ms attack | Accepted | 2026-06-12 |
 | [0016](0016-gate-canary.md) | Gate canary: the trip-matrix as a standing check | Accepted | 2026-06-12 |
 | [0017](0017-feature-respin-grid-collectibles.md) | LIGHTS OUT respin grid renders collectibles, not entry symbols | Accepted | 2026-06-12 |
+| [0018](0018-m2m-knowledge-base.md) | docs/kb: machine-to-machine knowledge base (shared sheets + per-agent journals) | Accepted | 2026-06-12 |

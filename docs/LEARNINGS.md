@@ -7,6 +7,19 @@ evergreen rules into `GOLDEN_RULES.md` via a Scott-reviewed PR.
 
 ## 2026-06-12
 
+- **docs/kb knowledge base added (ADR-0018, Scott's design).** Version-pinned,
+  example-heavy markdown crib sheets for the stack (Vite 8/Rolldown, Vitest 4
+  browser mode, Biome 2 GritQL, Pixi 8 + GSAP, this container/CI) + per-agent
+  journals (`docs/kb/journal/`). Hybrid model: shared fact sheets with
+  `[agent · date · grade]` attribution, append-only/supersede-never-delete;
+  session experience stays per-agent. Wired into AGENTS.md (§ Knowledge base +
+  source-of-truth order) and CLAUDE.md (session-start read). Evidence: docs-in-
+  context lifts agent coding 83–220% on less-common libraries, examples >> prose
+  (arXiv 2503.15231); rejected Drive PDFs (not greppable/diffable) and generic
+  compiler docs (training already covers them). Seeded by distilling the
+  tool-facts already proven in this file — future tool gotchas go to kb, project
+  gotchas stay here.
+
 - **SPOKEY PR2 presenter audit (auditor subagent, big-diff self-review) — 4
   seams folded in, 0 high.** The semantic pass on the presenter diff verified the
   core claims (collectibles-not-entry-symbols, first-spin-always-base confirmed
