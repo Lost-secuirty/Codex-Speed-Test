@@ -8,9 +8,13 @@
 import { Button } from '@pixi/ui';
 import type { Application } from 'pixi.js';
 import { Container, Graphics } from 'pixi.js';
-import { playCue } from '../../lib/audio/sound';
+import { arousalLevel } from '../../lib/audio/cue-model';
+import type { PlayOpts } from '../../lib/audio/playback';
+import { playCue, registerCueIntents, resumeAudio, setBusLevel } from '../../lib/audio/sound';
 import type { ProtoApi } from '../../lib/proto-contract';
 import { config } from './config';
+import type { CueName } from './contract';
+import { SPOKEY_CUES } from './cues';
 import { cellCoord } from './holdwin';
 import { advanceProximity, figureArrived } from './proximity';
 import {
@@ -64,6 +68,9 @@ const spinParams: SpinParams = {
   // a base spin's figure sightings advance proximity (ADR-0012).
   figure: 'figure',
   stepsToArrive: config.feature.stepsToArrive,
+  // below-threshold wins are LDWs; the honest toggle unmasks them (ADR-0014).
+  ldwThreshold: config.audio.ldwThreshold,
+  ldwHonest: config.flags.ldwHonest,
 };
 
 export const featureParams: FeatureParams = {
@@ -90,6 +97,10 @@ const reelPitch = B.cell * B.rows + B.gap * (B.rows - 1) + B.reelGap;
 const boardWidth = B.reels * B.cell + B.reelGap * (B.reels - 1);
 const originX = (config.canvas.width - boardWidth) / 2;
 
+/** What this scene may log: the frozen audio vocabulary (ADR-0015) plus the
+ *  two generic lifecycle markers every prototype exposes for verify.mjs. */
+type SceneCue = CueName | 'spin-start' | 'spin-settle';
+
 export function buildScene(app: Application, opts: SceneOptions = {}): Scene {
   const lightsOn = opts.lightsOn ?? false;
   let seed = (opts.seed ?? 1) >>> 0;
@@ -98,6 +109,7 @@ export function buildScene(app: Application, opts: SceneOptions = {}): Scene {
   /** figure proximity 0→1; at 1 the next spin fires LIGHTS OUT (ADR-0012). */
   let proximity = 0;
   let featureArmed = false;
+  let droneStarted = false;
   const hiddenValues = opts.hiddenValues ?? config.flags.hiddenValues;
   const motionScale = (opts.reducedMotion ?? config.flags.reducedMotion) ? 6 : 1;
   /** cone position in grid columns (0..reels-1); the searched pocket. */
@@ -105,9 +117,15 @@ export function buildScene(app: Application, opts: SceneOptions = {}): Scene {
   const cues: string[] = [];
   // value badges for the feature's captured tiles (above the reels + cone).
   const badgeLayer = new Container();
-  const logCue = (name: Parameters<typeof playCue>[0]) => {
+  // the synthesized soundscape (PR3): SPOKEY's intent table + table-wide
+  // mix options; names outside it (the lifecycle markers) keep legacy beeps.
+  registerCueIntents(SPOKEY_CUES, {
+    winFloor: config.audio.winFloor,
+    voiceCap: config.flags.swarmVoiceCap,
+  });
+  const logCue = (name: SceneCue, cueOpts?: PlayOpts) => {
     cues.push(name);
-    playCue(name);
+    playCue(name, { proximity, ...cueOpts });
   };
 
   // --- structured-dark background: faint road lines keep the dark frame
@@ -373,6 +391,13 @@ export function buildScene(app: Application, opts: SceneOptions = {}): Scene {
 
   function spin(): void {
     if (spinning) return;
+    // the spin IS the gesture: resume the AudioContext (autoplay policy) and
+    // ignite the bed exactly once per scene (ADR-0015).
+    resumeAudio();
+    if (!droneStarted) {
+      droneStarted = true;
+      logCue('drone-start');
+    }
     // the figure has arrived (or scatters triggered) → this spin is LIGHTS OUT.
     if (featureArmed) {
       seed = (seed + 0x9e3779b9) >>> 0;
@@ -400,9 +425,14 @@ export function buildScene(app: Application, opts: SceneOptions = {}): Scene {
           updateMeter(outcome.total > 0);
           if (outcome.total > 0) setTimeout(() => updateMeter(false), 200 / motionScale);
           logCue('spin-settle');
+          // the resolver's settle cue: win-celebrate, or the LDW law's
+          // ldw/ldw-honest (ADR-0014); silent on a true loss.
+          if (phase.cue) logCue(phase.cue);
           // advance the figure; arm the feature for the NEXT spin (never this
           // one, so the first spin is always a clean base spin — ADR-0012).
           proximity = advanceProximity(proximity, phase.proximityStep ?? 0);
+          // a sighting this spin = one Shepard step closer (ADR-0015).
+          if ((phase.proximityStep ?? 0) > 0) logCue('figure-near');
           if (
             figureArrived(proximity) ||
             countScatter(outcome.board, config.scatter) >= config.feature.triggerScatters
@@ -433,26 +463,37 @@ export function buildScene(app: Application, opts: SceneOptions = {}): Scene {
     for (const phase of outcome.phases) {
       const cells = phase.cells;
       if (phase.kind === 'trigger') {
-        schedule(() => logCue('feature-trigger'), at);
+        schedule(() => {
+          logCue('feature-trigger');
+          // the pre-baked arousal curve drives the bed per phase (ADR-0015).
+          setBusLevel('bed', arousalLevel('trigger'));
+        }, at);
       } else if (phase.kind === 'lock' && cells) {
         schedule(() => {
           for (const c of cells) shown.add(c);
           renderFeatureFrame(shown, revealed, locked, values);
           logCue('lights-out-tick');
+          setBusLevel('bed', arousalLevel('lock'));
         }, at);
       } else if (phase.kind === 'respin') {
-        schedule(() => logCue('swarm-tick'), at);
+        // swarm density grows with the captured count (capped in cue-model).
+        schedule(() => {
+          logCue('swarm-tick', { voices: 4 + shown.size });
+          setBusLevel('bed', arousalLevel('hold'));
+        }, at);
       } else if (phase.kind === 'reveal' && cells) {
         const n = Math.max(cells.length, 1);
+        schedule(() => setBusLevel('bed', arousalLevel('approach')), at);
         for (let k = 1; k <= cells.length; k++) {
           const rc = k;
           schedule(
             () => {
               revealed = rc;
               renderFeatureFrame(shown, revealed, locked, values);
-              if (rc === 1) logCue('rollup');
+              logCue('rollup'); // one tick per revealed tile (SPEC: tick-UP)
             },
-            at + (phase.durationMs * (k - 1)) / n,
+            // accelerating sweep: gaps shrink toward the end (audit M2).
+            at + phase.durationMs * ((k - 1) / n) ** 1.6,
           );
         }
       } else if (phase.kind === 'settle') {
@@ -462,7 +503,8 @@ export function buildScene(app: Application, opts: SceneOptions = {}): Scene {
           total = outcome.total;
           updateMeter(true);
           // resolveFeature's settle cue is only ever jackpot or win-celebrate.
-          logCue(phase.cue === 'jackpot' ? 'jackpot' : 'win-celebrate');
+          logCue(phase.cue ?? 'win-celebrate');
+          setBusLevel('bed', arousalLevel('idle'));
           proximity = 0; // the night resets after the figure passes
           spinning = false;
         }, at);

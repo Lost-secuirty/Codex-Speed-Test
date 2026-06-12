@@ -51,6 +51,10 @@ export const config = {
   // structured-dark anchors (ADR-0011): the dark frame still has luminance so
   // it is diffable. ambient is the floor brightness every cell keeps.
   light: { ambient: 0.06, coneRadius: 2.6, coneIntensity: 1.0 },
+  // synthesized soundscape (ADR-0015, PR3). ldwThreshold: a base-game "win"
+  // below this is a loss-disguised-as-win (ADR-0014); winFloor: how far the
+  // win juice ducks as the figure arrives (proximity 1 → this gain).
+  audio: { ldwThreshold: 10, winFloor: 0.35 },
   flags: {
     nearMiss: true,
     stopButton: true,

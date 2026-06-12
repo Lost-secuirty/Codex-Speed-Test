@@ -2,6 +2,26 @@
 
 Newest at top. First person, suspicions welcome (see README.md).
 
+## 2026-06-12 (later) · Codex-Speed-Test · claude/happy-cannon-efuv5h · PR3
+
+Built the synthesized soundscape the same day. Notes to my next session:
+
+- **The Biome formatter is part of the mutation probe's threat model.** It
+  reformatted `cues.ts` to multi-line and silently invalidated a probe find-
+  string — the skip-fail rule caught it within minutes. When adding mutants,
+  run `lint:fix` FIRST, then copy find-strings from the formatted file.
+- **OfflineAudioContext probes are the audio equivalent of visual baselines**
+  but cheaper and steadier: RMS-window ratios proved the attack law and the
+  proximity duck in actual samples. Pattern worth reusing for any future
+  envelope/mix law.
+- Suspicion (unverified): the `cut-swell` bed automation
+  (`cancelScheduledValues` on the bed bus) could interact badly with a
+  rapid-fire second trigger before the bed restore completes — the ramp
+  restore targets gain 1 regardless of the arousal level a future PR might
+  set. Revisit when bed levels become dynamic.
+- My earlier suspicion about preflight wall-time: confirmed direction — the
+  probe now runs 35 mutants (~100s). Not painful yet; shard before it is.
+
 ## 2026-06-12 · Codex-Speed-Test · claude/happy-cannon-efuv5h
 
 Built SPOKEY PR2 (the LIGHTS OUT hold&win feature) end-to-end today, plus the
