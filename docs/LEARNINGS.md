@@ -7,6 +7,32 @@ evergreen rules into `GOLDEN_RULES.md` via a Scott-reviewed PR.
 
 ## 2026-06-12
 
+- **SPOKEY: LIGHTS OUT design locked via 3 MoE panels + an evidence round + a
+  meta-audit (PR0 = spec/ADRs first).** A 5×4 ways hold&win horror slot, "the
+  invasion witnessed from inside the dark." Full design in
+  `docs/prototypes/spokey-lights-out/SPEC.md`; graded citation trail in
+  `EVIDENCE.md`; decisions in ADRs 0009–0015. Method note for future
+  prototypes: a two-round MoE (opinion → forced evidence/before-after) plus a
+  ninth meta-auditor that red-teams the experts caught three "incomplete-spec
+  handoffs" the panel missed (outcome-script shape, proximity ownership, the
+  missing lights-on baseline). The meta-audit pattern is worth repeating —
+  experts converge and groupthink; a dedicated red-team finds the seams.
+- **Frozen the outcome contract BEFORE feature code** (`contract.ts`:
+  `OutcomePhase`/`ResolvedOutcome`/`CueName`). The hold&win presenter's
+  complexity explodes without a typed outcome shape — the meta-audit's #1
+  one-shot failure risk (ADR-0010). resolve-then-present is already proven in
+  the scaffold's `scene.ts`.
+- **Deviation from plan:** PR0 does NOT register the prototype in
+  `src/prototypes-manifest.ts` yet. The manifest drives Vite's build entries,
+  so registering it before `index.html` exists would fail `npm run build`.
+  Registration moves to PR1 alongside the entry HTML. (Logged per WA #10.)
+- **Evidence honesty (carried from the panels):** many primary PDFs 403'd this
+  session, so psychology/psychoacoustics sources are SECONDARY; the "19Hz fear
+  frequency" is a busted myth (use the missing fundamental). The design is
+  config-forgiving by construction — weak-evidence levers ship as toggles
+  (`nearMiss`, `ldwHonest`, `hiddenValues`), so the prototype is also an A/B
+  harness for the contested claims.
+
 - **CodeQL + Dependency Review demoted to manual-only (Scott's call).**
   Both need GHAS on a private repo — verified live: dependency review
   errors "Dependency graph … along with GitHub Advanced Security", CodeQL
