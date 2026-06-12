@@ -1,0 +1,32 @@
+node_modules/
+dist/
+*.log
+# vite cache
+.vite/
+# verification screenshots (E2E smoke)
+shot-*.png
+# vitest browser-mode failure artifacts (baselines in __screenshots__ ARE committed)
+.vitest-attachments/
+# generated drift-audit report + scratch
+audit-report.md
+.audit/
+# local agent observability log (hook events)
+.claude/logs/
+# test/coverage output
+coverage/
+test-results/
+
+# Secrets / credential carriers — never commit
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.keystore
+id_rsa*
+credentials*
+*.tfvars
+
+# Personal / Drive tier — must never reach GitHub
+PERSONAL_JOURNAL*
+private/

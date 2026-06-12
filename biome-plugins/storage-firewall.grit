@@ -1,0 +1,16 @@
+// Storage firewall (ported from demo-math LEARNINGS 2026-06-11): all
+// persistence goes through src/lib/storage.ts so quota errors, JSON
+// parsing, and test stubbing live in ONE place. Direct localStorage /
+// sessionStorage anywhere else is an error.
+// storage.ts itself uses `globalThis.localStorage` — the sanctioned,
+// documented escape this rule deliberately does not match.
+// SCOPE (known-uncovered, tripwire not wall): globalThis/self aliases,
+// destructuring from window.
+or {
+  `localStorage.$method($args)` as $hit,
+  `sessionStorage.$method($args)` as $hit,
+  `window.localStorage` as $hit,
+  `window.sessionStorage` as $hit
+} where {
+  register_diagnostic(span=$hit, message="Persistence goes through src/lib/storage.ts only — no direct localStorage/sessionStorage (LEARNINGS 2026-06-12).")
+}

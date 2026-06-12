@@ -1,0 +1,4 @@
+# Append-only audit log: union-merge kills tail conflicts (ADR-0007).
+docs/audit-history.ndjson merge=union
+# Visual-regression baselines are binary.
+*.png binary

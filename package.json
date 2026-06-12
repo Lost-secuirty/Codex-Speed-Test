@@ -1,0 +1,41 @@
+{
+  "name": "codex-speed-test",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Private slot-frontend prototyping playground — UI, sound, juice. The math lives in Demo-math-slot-test-only.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "lint:ci": "biome ci .",
+    "format": "biome format --write .",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.node.json",
+    "test": "vitest run --project unit",
+    "test:watch": "vitest --project unit",
+    "test:browser": "vitest run --project browser",
+    "test:visual:update": "vitest run --project browser --update",
+    "mutation": "node scripts/mutation-probe.mjs",
+    "audit": "node scripts/audit-drift.mjs",
+    "smoke": "node verify.mjs",
+    "preflight": "node scripts/preflight.mjs"
+  },
+  "dependencies": {
+    "@pixi/layout": "^3.2.0",
+    "@pixi/sound": "^6.0.1",
+    "@pixi/ui": "^2.3.2",
+    "gsap": "^3.15.0",
+    "pixi.js": "^8.19.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.16",
+    "@types/node": "^25.9.3",
+    "@vitest/browser-playwright": "^4.1.8",
+    "playwright": "^1.60.0",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.16",
+    "vitest": "^4.1.8"
+  }
+}
