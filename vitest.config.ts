@@ -36,10 +36,12 @@ export default defineConfig({
               toMatchScreenshot: {
                 comparatorName: 'pixelmatch',
                 comparatorOptions: {
-                  // Headless software-WebGL rasterization differs slightly
-                  // across machines; threshold tuned at scaffold time
-                  // (docs/LEARNINGS.md) — tighten only with evidence.
-                  threshold: 0.2,
+                  // Tuned at scaffold time (docs/LEARNINGS.md 2026-06-12):
+                  // 0.2 silently passed a dark-purple background swap on this
+                  // dark UI — per-pixel stays strict (0.05) and cross-machine
+                  // anti-aliasing drift is absorbed by the 1% mismatched-pixel
+                  // allowance instead. Loosen only with evidence.
+                  threshold: 0.05,
                   allowedMismatchedPixelRatio: 0.01,
                 },
               },

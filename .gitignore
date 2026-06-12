@@ -5,9 +5,8 @@ dist/
 .vite/
 # verification screenshots (E2E smoke)
 shot-*.png
-# vitest browser-mode failure output (baselines in __screenshots__ ARE committed)
-test/browser/__screenshots__/**/*-actual.png
-test/browser/__screenshots__/**/*-diff.png
+# vitest browser-mode failure artifacts (baselines in __screenshots__ ARE committed)
+.vitest-attachments/
 # generated drift-audit report + scratch
 audit-report.md
 .audit/

@@ -7,6 +7,36 @@ evergreen rules into `GOLDEN_RULES.md` via a Scott-reviewed PR.
 
 ## 2026-06-12
 
+- **Gate-trip matrix (scaffold PR): every gate deliberately tripped once,
+  verified firing, then reverted.** Evidence (all observed in-session):
+  - lint: unused var → `biome ci` fails (`noUnusedVariables`) ✓
+  - GritQL plugins: direct `localStorage` → storage-firewall diagnostic ✓;
+    `'pointermove'` + plain-object `generateTexture` frame → diagnostics ✓
+    (fixture-tested); `globalThis.localStorage` escape stays clean ✓
+  - typecheck: string-to-number assignment → `tsc` 2 errors ✓
+  - unit: flipped `wrapIndex` expectation → vitest fails ✓
+  - mutation: 6/6 mutants killed (100%) after replacing one EQUIVALENT
+    mutant (see below) ✓
+  - visual: bright-red background → screenshot mismatch fails ✓; dark
+    purple #3a0ca3 PASSED at threshold 0.2 → **tightened to 0.05** (dark
+    UI hides dark drift; AA absorbed by 1% mismatched-pixel ratio) ✓
+  - smoke: `exposeProto` removed → verify.mjs boots-check fails ✓
+  - audit diff checks: scratch commit with `biome-ignore`/`TODO`/
+    `console.log` in src/lib → `lint-suppress`+`todo-marker`+`debug-stmt` ✓;
+    body without the section → `deviations-section` ✓; type error under
+    `--run-checks` → `typecheck-fail` + `lint-fail` ✓; `sensitive-paths`
+    fired on the scaffold's own config changes ✓
+  - scanner: staged AWS example key → pre-commit hook BLOCKS the commit ✓
+    (`--self-test`: 6 secret + 3 PII + 7 clean ✓)
+  - guard hook: Edit on `package-lock.json` and on `__screenshots__/*` →
+    exit 2 deny ✓; format hook: messy file auto-formatted on edit ✓
+- **Vitest browser failure artifacts land in `.vitest-attachments/`** —
+  gitignore it (one PNG snuck into the prototype commit via `git add -A`;
+  removed). Also: `git reset --hard` for scratch-commit cleanup eats
+  UNRELATED uncommitted work — stash or commit first.
+- **`pkill -f 'vite preview'` matches the compound shell command that
+  contains the string** and kills your own batch — capture the server PID
+  instead.
 - **This dev container blocks `cdn.playwright.dev`** (network egress
   allowlist) — `npx playwright install chromium` fails. A pre-provisioned
   Chromium lives at `/opt/pw-browsers/chromium-*/chrome-linux/chrome`
