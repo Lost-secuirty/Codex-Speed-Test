@@ -71,6 +71,9 @@ describe('resolveFeature', () => {
     expect(out.accumulator.locked).toEqual(Array.from({ length: 20 }, (_, i) => i));
     expect(out.total).toBe(316);
     expect(out.accumulator.total).toBe(316);
+    // values run parallel to locked and reconcile with the total (ADR-0017).
+    expect(out.accumulator.values).toHaveLength(20);
+    expect(out.accumulator.values.reduce((a, b) => a + b, 0)).toBe(316);
     expect(out.phases.at(-1)?.cue).toBe('jackpot');
   });
 

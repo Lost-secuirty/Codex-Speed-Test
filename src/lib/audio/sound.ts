@@ -6,7 +6,19 @@
 
 import { sound } from '@pixi/sound';
 
-export type CueName = 'spin-start' | 'reel-stop' | 'spin-settle';
+export type CueName =
+  | 'spin-start'
+  | 'reel-stop'
+  | 'spin-settle'
+  // SPOKEY LIGHTS OUT feature cues (PR2) — placeholder beeps so the hook points
+  // and the cue-ordering log are real now; PR3 replaces these specs with the
+  // synthesized cue-model (ADR-0015, ≥120ms attack), keeping the same names.
+  | 'feature-trigger'
+  | 'lights-out-tick'
+  | 'swarm-tick'
+  | 'rollup'
+  | 'win-celebrate'
+  | 'jackpot';
 
 interface CueSpec {
   frequency: number;
@@ -18,6 +30,12 @@ const CUES: Record<CueName, CueSpec> = {
   'spin-start': { frequency: 440, durationMs: 120, type: 'square' },
   'reel-stop': { frequency: 660, durationMs: 80, type: 'triangle' },
   'spin-settle': { frequency: 880, durationMs: 220, type: 'sine' },
+  'feature-trigger': { frequency: 196, durationMs: 320, type: 'sawtooth' },
+  'lights-out-tick': { frequency: 523, durationMs: 90, type: 'triangle' },
+  'swarm-tick': { frequency: 1200, durationMs: 40, type: 'square' },
+  rollup: { frequency: 740, durationMs: 80, type: 'sine' },
+  'win-celebrate': { frequency: 988, durationMs: 260, type: 'sine' },
+  jackpot: { frequency: 110, durationMs: 600, type: 'sawtooth' },
 };
 
 let muted = false;

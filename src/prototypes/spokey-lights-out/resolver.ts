@@ -94,7 +94,7 @@ export function resolveSpin(seed: number, p: SpinParams): ResolvedOutcome {
     durationMs: 200,
   });
 
-  return { board, phases, total, accumulator: { locked: [], total }, seed };
+  return { board, phases, total, accumulator: { locked: [], total, values: [] }, seed };
 }
 
 // =====================================================================
@@ -215,7 +215,11 @@ export function resolveFeature(seed: number, p: FeatureParams): ResolvedOutcome 
     board,
     phases,
     total,
-    accumulator: { locked: ordered.map((t) => t.index), total },
+    accumulator: {
+      locked: ordered.map((t) => t.index),
+      total,
+      values: ordered.map((t) => t.value),
+    },
     seed,
   };
 }

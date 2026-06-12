@@ -7,6 +7,40 @@ evergreen rules into `GOLDEN_RULES.md` via a Scott-reviewed PR.
 
 ## 2026-06-12
 
+- **SPOKEY PR2 presenter shipped — the feature is playable.** `scene.ts` gained
+  the LIGHTS OUT path: the board converts to a collectibles respin grid
+  (ADR-0017), value tiles lock in (font-free seven-seg badges), the flashlight
+  sweep reveals values (the `hiddenValues` A/B — covered vs shown), and it settles
+  or blacks out on a jackpot. Proximity is wired (ADR-0012): each base spin
+  advances the figure and arms the feature for the NEXT spin — never the current
+  one, so the first spin is always a clean base spin and the generic `verify.mjs`
+  smoke (one spin) still sees `spin-start`/`spin-settle`. Third visual baseline
+  committed (`spokey-feature-visible`, the full-board jackpot end-state with
+  values shown). `forceFeature` debug hook drives the feature deterministically;
+  the browser test asserts feature-trigger → rollup → terminal-cue ordering.
+- **Contract extended additively: `accumulator.values`** (parallel to `locked`,
+  reveal order) — the presenter needs each captured value to render the reveal,
+  and phases carry only cell indices. Same additive policy as PR1's `board`/
+  `total`; the FROZEN part (phase/kind/cue vocabulary) is untouched. `resolveSpin`
+  returns `values: []`, `resolveFeature` returns the per-tile values; the seed-7
+  oracle now also pins `values.length===20` and their sum===316.
+- **`sound.ts` gained 6 feature cues as placeholder beeps** (`feature-trigger`,
+  `lights-out-tick`, `swarm-tick`, `rollup`, `win-celebrate`, `jackpot`) so the
+  hook points + cue-ordering log are real in PR2; PR3 replaces the specs with the
+  synthesized cue-model (ADR-0015, ≥120ms attack) behind the same names. Note:
+  `sound.ts`'s `CueName` (placeholder/growing) and `contract.ts`'s `CueName` (the
+  eventual full vocab) are two types that overlap — PR3 unifies them via the
+  cue-model. The settle cue is narrowed (`=== 'jackpot' ? … : 'win-celebrate'`)
+  because `phase.cue` is the broad contract type.
+- **Deviation (WA #10): the presenter uses `setTimeout` scheduling, not a paused
+  GSAP timeline.** The plan/PR body said GSAP-timeline-driven; but the
+  load-bearing visual proof is a STATIC end-state frame (`?feature=1`), which
+  needs no mid-animation seek, so the timeline's seek-determinism benefit doesn't
+  apply here. setTimeout matches PR1's `spin()` and is `motionScale`-capped for
+  CI. GSAP-timeline deferred to if/when we screenshot mid-animation. Also: the
+  feature-trigger assertion lives in the SPOKEY browser test (deterministic
+  `forceFeature`), not the generic smoke (which only does one base spin).
+
 - **SPOKEY PR2 pure feature logic shipped + meta-audited before the presenter.**
   Prototype-local (ADR-0004): `proximity.ts` (seed-deterministic figure approach,
   ADR-0012), `holdwin.ts` (the classic reset-on-new / decrement-on-none respin

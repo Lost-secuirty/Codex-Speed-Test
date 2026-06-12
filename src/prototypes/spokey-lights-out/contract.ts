@@ -39,8 +39,10 @@ export interface ResolvedOutcome {
   phases: OutcomePhase[];
   /** total win for this outcome (placeholder, not RTP math — ADR-0001). */
   total: number;
-  /** hold&win bookkeeping: which cells are locked and the running total. */
-  accumulator: { locked: number[]; total: number };
+  /** hold&win bookkeeping: locked cell indices (reveal order), their captured
+   *  values (parallel to `locked`, ADR-0017), and the running total. Additive,
+   *  like PR1's `board`/`total` — the FROZEN part is the phase/cue vocabulary. */
+  accumulator: { locked: number[]; total: number; values: number[] };
   /** the seed that produced this outcome — reproducible for tests/baselines. */
   seed: number;
 }
