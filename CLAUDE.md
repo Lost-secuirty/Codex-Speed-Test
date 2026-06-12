@@ -40,6 +40,13 @@ inverted (ADR-0007):** before every `git push`, run
 The CI drift audit (`.github/workflows/audit.yml`) still runs on every PR and
 posts a report comment. `/audit-retro` stays manual and propose-only.
 
+## Knowledge base (docs/kb — ADR-0018)
+
+Stack crib sheets + per-agent journals. On session start: skim
+`docs/kb/INDEX.md` and read `docs/kb/journal/claude.md` (your own continuity
+notes). Before touching Vite/Vitest/Biome/Pixi config or CI, read the matching
+sheet — and append what you verify, per the AGENTS.md § Knowledge base contract.
+
 ## Environment notes
 
 - Ephemeral remote container — commit & push to persist work.

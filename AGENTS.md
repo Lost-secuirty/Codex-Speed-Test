@@ -130,8 +130,26 @@ npm run preflight      # THE pre-push gate: all of the above, strict (scripts/pr
 ## Source-of-truth order
 
 Live repo state + passing tests > this file (then `SECURITY.md`) >
-`docs/adr/` > `docs/LEARNINGS.md` > external docs (cited) > chat/memory.
+`docs/adr/` > `docs/LEARNINGS.md` > `docs/kb/` (stack facts) > external docs
+(cited) > chat/memory.
 When sources disagree, flag the disagreement; never silently pick a side.
+
+## Knowledge base (`docs/kb/` — ADR-0018)
+
+Version-pinned, example-heavy crib sheets for the STACK (tools outside or past
+an agent's training), plus per-agent journals. The contract, binding on every
+agent and subagent:
+
+- **Before working with a tool listed in `docs/kb/INDEX.md`:** read the INDEX,
+  then only the sheet(s) you need. Don't bulk-load the folder.
+- **When you verify a new tool fact/gotcha:** append it to the matching sheet,
+  tagged `[agent · date · VERIFIED|SECONDARY|MYTH]`. Append-only — mark
+  superseded entries `SUPERSEDED:`, never delete another agent's entry.
+- **Your session story goes in `docs/kb/journal/<agent>.md`** (first person;
+  suspicions welcome; read your own journal on session start). Never edit
+  another agent's journal.
+- Scope: kb = the stack · ADRs = project decisions · LEARNINGS = project
+  gotchas. Distill tool-facts out of LEARNINGS into kb when you spot them.
 
 ## Working Agreement (auto mode — applies to every agent and subagent)
 
