@@ -1,15 +1,29 @@
-# Requires the dependency graph to be enabled (SETTINGS-CHECKLIST.md).
+# MANUAL-ONLY (Scott's call, 2026-06-12 — see SETTINGS-CHECKLIST.md and
+# LEARNINGS): the dependency-review API requires GitHub Advanced Security
+# on a private repo, so automatic PR runs could never pass. Supply-chain
+# coverage that DOES run free on private repos: Dependabot alerts +
+# grouped monthly updates with a 7-day cooldown (.github/dependabot.yml)
+# and `npm audit`. To re-enable automatic PR review (repo goes public or
+# GHAS is purchased), restore:
+#
+#  on:
+#    pull_request:
+#      paths: [package.json, package-lock.json]
 name: Dependency Review
 
 on:
-  pull_request:
-    paths:
-      - package.json
-      - package-lock.json
+  workflow_dispatch:
+    inputs:
+      base-ref:
+        description: "Base ref to diff dependencies from"
+        required: true
+        default: "main"
+      head-ref:
+        description: "Head ref to diff dependencies to"
+        required: true
 
 permissions:
   contents: read
-  pull-requests: read
 
 jobs:
   review:
@@ -19,3 +33,6 @@ jobs:
         with:
           persist-credentials: false
       - uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          base-ref: ${{ inputs.base-ref }}
+          head-ref: ${{ inputs.head-ref }}

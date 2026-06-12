@@ -1,16 +1,20 @@
-# NOTE (SETTINGS-CHECKLIST.md): code scanning on a PRIVATE repo requires
-# GitHub Advanced Security / Code Security. Without it this workflow fails
-# with an entitlement error — that is expected and documented; keep the
-# workflow (maximal-gates rule) but do NOT mark it a required check until
-# it has run green on this plan.
+# MANUAL-ONLY (Scott's call, 2026-06-12 — see SETTINGS-CHECKLIST.md and
+# LEARNINGS): code-scanning upload requires GitHub Advanced Security on a
+# private repo, so automatic runs could never pass — a permanently red
+# check breeds alarm fatigue. The workflow stays installed and runnable;
+# to re-enable automatic scanning (repo goes public or GHAS is purchased),
+# restore the push/pull_request/schedule triggers below.
+#
+#  on:
+#    push:
+#      branches: [main]
+#    pull_request:
+#    schedule:
+#      - cron: "41 7 * * 1"
 name: CodeQL
 
 on:
-  push:
-    branches: [main]
-  pull_request:
-  schedule:
-    - cron: "41 7 * * 1"
+  workflow_dispatch:
 
 permissions:
   contents: read

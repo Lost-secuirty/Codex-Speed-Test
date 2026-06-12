@@ -18,17 +18,20 @@ them from a commit. Sequenced so the scaffold PR isn't stranded.
       On private repos this may require GitHub Secret Protection (paid).
       The repo's own `scan.yml` + pre-commit gate runs regardless.
 
-## CodeQL caveat (read before trusting that check)
+## CodeQL + Dependency Review: manual-only (decided 2026-06-12)
 
-`codeql.yml` is included per the maximal-gates rule, but **code scanning on a
-private repo requires GitHub Advanced Security / Code Security**, which a
-personal free plan does not have. Expected outcomes:
+Both require **GitHub Advanced Security / Code Security** on a private repo
+— confirmed live on PR #1 (entitlement errors on every run, before and
+after the free security toggles). Scott's call: the repo stays private and
+GHAS isn't worth it for a client-side play-money sandbox, so both
+workflows are **`workflow_dispatch`-only** — installed and runnable, never
+auto-red. Supply-chain coverage that runs free on private repos remains
+on: Dependabot alerts + grouped monthly updates with 7-day cooldown, and
+`npm audit`.
 
-- Repo public: CodeQL runs free and works.
-- Repo private without GHAS: the workflow will fail with an entitlement
-  error. This is **expected and documented** — do not let an agent "fix" it
-  by deleting the workflow; leave it as a visible reminder, and do NOT mark
-  it a required status check.
+**To re-enable automatic runs** (repo goes public, gains a backend, or
+GHAS is purchased): restore the commented-out triggers at the top of
+`codeql.yml` / `dependency-review.yml` — three lines each.
 
 ## After the scaffold PR is merged
 

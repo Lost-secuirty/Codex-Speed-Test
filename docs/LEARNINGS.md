@@ -7,6 +7,15 @@ evergreen rules into `GOLDEN_RULES.md` via a Scott-reviewed PR.
 
 ## 2026-06-12
 
+- **CodeQL + Dependency Review demoted to manual-only (Scott's call).**
+  Both need GHAS on a private repo — verified live: dependency review
+  errors "Dependency graph … along with GitHub Advanced Security", CodeQL
+  *scans* fine but the results upload is refused ("Resource not accessible
+  by integration"). Free toggles don't unlock them. A check that can never
+  pass is worse than an absent one (alarm fatigue); both workflows keep
+  their SHA-pinned jobs behind `workflow_dispatch` with re-enable
+  instructions in-file. Supply-chain coverage stays: Dependabot
+  alerts/updates + cooldown, `npm audit`.
 - **Two silent-failure seams closed after Scott's review (fold-in):**
   (1) `audit-drift.mjs` now refuses to run on an unresolvable base/head ref
   (exit 2) — previously a bad ref produced an empty diff and a vacuous
