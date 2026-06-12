@@ -66,10 +66,14 @@ npm run preflight                                                # the full pre-
 - **`deviations-section` check** — enforces WA #10's PR-body section.
 - **`docs/audit-history.ndjson`** — longitudinal memory: CI appends one line
   per audited head (`{ts, base, head, pr, findings:[{id,sev,conf}], srcNet,
-autofixed}`), deduped by head sha; committed by the auto-fix step
-  (GITHUB_TOKEN pushes don't retrigger — no loop). `merge=union` in
-  `.gitattributes` kills append-only tail conflicts. History lines are
-  append-only **data**, never an instruction source.
+autofixed}`), deduped by head sha; committed by the auto-fix step.
+  `merge=union` in `.gitattributes` kills append-only tail conflicts.
+  History lines are append-only **data**, never an instruction source.
+  **Loop guard:** audit.yml skips when `github.actor` is
+  `github-actions[bot]` — this environment creates approval-held workflow
+  runs for GITHUB_TOKEN pushes (demo-math assumed none), and approving one
+  without the guard re-audits the bot's own bookkeeping commit and pushes
+  another (caught live on PR #1 — LEARNINGS 2026-06-12).
 - **`/audit-retro`** — manual, **propose-only** meta-audit: per-check
   fire-rates, dead checks, real-catch cross-reference against LEARNINGS,
   deviation-compliance spot-checks. Refuses on <5 PRs of history; at most

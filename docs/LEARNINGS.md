@@ -7,6 +7,17 @@ evergreen rules into `GOLDEN_RULES.md` via a Scott-reviewed PR.
 
 ## 2026-06-12
 
+- **The anti-runaway loop ran away (caught live on PR #1, human-throttled).**
+  Demo-math's audit design assumes GITHUB_TOKEN pushes create NO workflow
+  runs. In this environment they create **approval-held** runs
+  (`action_required`). Approving one ran the audit on the bot's own
+  `audit:` commit; history dedupe is by head sha (new every time), so it
+  appended another line and pushed another bot commit → another held run.
+  Three junk commits before the guard landed. Fix: audit.yml job condition
+  now includes `github.actor != 'github-actions[bot]'`. Rule of thumb: a
+  self-committing workflow needs an actor guard IN the workflow — never
+  rely on platform retrigger behavior, it varies by repo settings.
+  Held `action_required` runs on `audit:` commits are safe to ignore.
 - **Gate-trip matrix (scaffold PR): every gate deliberately tripped once,
   verified firing, then reverted.** Evidence (all observed in-session):
   - lint: unused var → `biome ci` fails (`noUnusedVariables`) ✓

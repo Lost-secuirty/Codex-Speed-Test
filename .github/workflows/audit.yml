@@ -17,8 +17,13 @@ permissions:
 jobs:
   audit:
     runs-on: ubuntu-latest
-    # GITHUB_TOKEN is read-only for fork PRs, so skip them (can't comment/push).
-    if: github.event.pull_request.head.repo.full_name == github.repository
+    # Fork gate: GITHUB_TOKEN is read-only for fork PRs (can't comment/push).
+    # Actor guard: never run on the audit's OWN bot pushes. This environment
+    # creates approval-held runs for GITHUB_TOKEN pushes (instead of none, as
+    # the demo-math design assumed); without this guard, every "Approve and
+    # run" on a held run minted another `audit:` commit — a human-throttled
+    # self-amplifying loop (LEARNINGS 2026-06-12, PR #1).
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'github-actions[bot]'
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
