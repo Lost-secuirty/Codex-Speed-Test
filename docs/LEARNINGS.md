@@ -7,6 +7,35 @@ evergreen rules into `GOLDEN_RULES.md` via a Scott-reviewed PR.
 
 ## 2026-06-12
 
+- **SPOKEY PR1 (base game) shipped.** 5×4 ways board, diegetic rusted cabinet,
+  seven-segment vector meters, darkness-as-data lighting, the `?lightsOn=1`
+  debug toggle, both visual baselines. Pure modules (`src/lib/rng.ts` +
+  prototype-local `ways.ts`/`visibility.ts`/`resolver.ts`) fully unit-tested
+  (62 unit tests) and added to the mutation probe (13/13 killed, 100% after
+  fixing one redundant-guard survivor — the `MIN_REELS` check only bites when
+  the paytable would actually pay below the minimum, so the test now uses a
+  greedy paytable). Smoke walks both prototypes: 12/12.
+- **Deviation from the plan (logged, WA #10):** SPOKEY-specific pure logic
+  lives in the prototype dir, not `src/lib/feature/` as the plan/SPEC said.
+  Reason: it isn't shared across prototypes (ADR-0004 scopes `src/lib` to
+  *shared* code), and a `src/lib` module importing the prototype's
+  `contract.ts` would be a dependency inversion. Only the generic seeded RNG
+  graduated to `src/lib/rng.ts`. The modules are still fully tested + mutation-
+  probed, so the strict-gate's intent (no untested logic) is met regardless of
+  the relaxed prototype threshold.
+- **`ResolvedOutcome` gained a `board` + `total` field** (additive, non-breaking)
+  — the presenter needs the final layout to render. The frozen *phase* shape
+  (the meta-audit's risk) is unchanged.
+- **Dark-frame visual baseline determinism:** with a correctly-captured
+  baseline the dark + lit frames pass 3/3 locally. Gotcha learned: `git
+  checkout <file>` can't revert an UNTRACKED new file (use sed/manual revert),
+  and a sloppy trip-and-revert on an untracked source left a stale baseline
+  that failed consistently until `--update`. The soft translucent flashlight-
+  cone gradient is the cross-Chromium risk (141 local vs 148 CI); the data-
+  driven cell alpha is the real lighting, the cone is cosmetic. If CI's dark
+  frame drifts >1%, regenerate on CI's browser via `visual-baseline.yml`
+  (ADR-0011) — not a code change.
+
 - **SPOKEY: LIGHTS OUT design locked via 3 MoE panels + an evidence round + a
   meta-audit (PR0 = spec/ADRs first).** A 5×4 ways hold&win horror slot, "the
   invasion witnessed from inside the dark." Full design in

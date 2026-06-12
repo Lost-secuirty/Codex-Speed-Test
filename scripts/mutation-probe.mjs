@@ -89,6 +89,49 @@ const MUTATIONS = [
     find: 'if (raw === null) return fallback;',
     replace: 'if (false) return fallback;',
   },
+  // --- SPOKEY: LIGHTS OUT pure modules (PR1) ---
+  {
+    name: 'rng: randInt rounds up (escapes the [0,n) bound)',
+    file: 'src/lib/rng.ts',
+    find: 'return Math.floor(rng() * n);',
+    replace: 'return Math.ceil(rng() * n);',
+  },
+  {
+    name: 'spokey ways: a reel gap no longer stops the ways count',
+    file: 'src/prototypes/spokey-lights-out/ways.ts',
+    find: 'if (c === 0) break;',
+    replace: 'if (c === 0) continue;',
+  },
+  {
+    name: 'spokey ways: ways adds per-reel counts instead of multiplying',
+    file: 'src/prototypes/spokey-lights-out/ways.ts',
+    find: 'ways *= c;',
+    replace: 'ways += c;',
+  },
+  {
+    name: 'spokey ways: pays below the minimum reel span',
+    file: 'src/prototypes/spokey-lights-out/ways.ts',
+    find: 'if (reels < MIN_REELS) continue;',
+    replace: 'if (reels < 0) continue;',
+  },
+  {
+    name: 'spokey visibility: falloff inverted (dark center, bright edge)',
+    file: 'src/prototypes/spokey-lights-out/visibility.ts',
+    find: 'return 1 - dist / radius;',
+    replace: 'return dist / radius;',
+  },
+  {
+    name: 'spokey visibility: ambient floor dropped (pure black dark frame)',
+    file: 'src/prototypes/spokey-lights-out/visibility.ts',
+    find: 'let light = ambient;',
+    replace: 'let light = 0;',
+  },
+  {
+    name: 'spokey resolver: reel-stop stagger lost',
+    file: 'src/prototypes/spokey-lights-out/resolver.ts',
+    find: '(p.reelDurationMs + r * p.reelStaggerMs) * drag',
+    replace: 'p.reelDurationMs * drag',
+  },
 ];
 
 function makeTemp() {

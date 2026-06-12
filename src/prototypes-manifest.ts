@@ -17,4 +17,10 @@ export const prototypes: PrototypeEntry[] = [
     description:
       'The scaffold proof: 3 procedural reels, GSAP spin over pure reel-math, sound hooks, visual baseline.',
   },
+  {
+    id: 'spokey-lights-out',
+    title: 'SPOKEY: LIGHTS OUT',
+    description:
+      'Dark 5×4 ways horror slot — the invasion witnessed from inside the dark. PR1: base game, darkness-as-data, diegetic cabinet.',
+  },
 ];

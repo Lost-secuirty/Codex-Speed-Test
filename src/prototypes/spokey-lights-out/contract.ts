@@ -34,7 +34,11 @@ export interface OutcomePhase {
 
 /** The complete, synchronously-computed result of one spin (ADR-0010). */
 export interface ResolvedOutcome {
+  /** final symbol layout, board[reel][row] — what the presenter renders. */
+  board: string[][];
   phases: OutcomePhase[];
+  /** total win for this outcome (placeholder, not RTP math — ADR-0001). */
+  total: number;
   /** hold&win bookkeeping: which cells are locked and the running total. */
   accumulator: { locked: number[]; total: number };
   /** the seed that produced this outcome — reproducible for tests/baselines. */
