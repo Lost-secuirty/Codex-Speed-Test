@@ -25,6 +25,11 @@ decision at every fork. The citation trail and the meta-audit record are in
 - **LIGHTS OUT (hold&win):** eye-pair and aftermath-evidence symbols lock and
   accumulate; the count climbs on mechanical meters. Triggered by 6+ scatter
   *or* the figure arriving (`proximity >= 1`). Full board = blackout jackpot.
+  Once triggered, **the board becomes the respin grid** (ADR-0017): locked cells
+  render as captured-value collectibles, free cells go dark, and the entry
+  board's filler symbols are left behind — respins light cells by seed, decoupled
+  from entry symbols (as real hold&win reels are), so there is no symbol/lock
+  mismatch. The presenter reads only `accumulator.locked` + each tile's value.
 - **Held values — both, `hiddenValues` toggle (ADR-0013):** hidden-reveal (watch
   the count, not the worth, until the flashlight sweep) is the default; visible
   is the market-proven control. The built-in A/B.

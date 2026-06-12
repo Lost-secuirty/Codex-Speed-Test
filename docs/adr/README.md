@@ -22,3 +22,4 @@ scaffolds it).
 | [0014](0014-extractive-feel-within-no-wagering.md) | Classic extractive feel, within the hard no-wagering line | Accepted | 2026-06-12 |
 | [0015](0015-audio-cue-model-seam.md) | Audio: pure cue-model + thin playback seam, Shepard, ≥120ms attack | Accepted | 2026-06-12 |
 | [0016](0016-gate-canary.md) | Gate canary: the trip-matrix as a standing check | Accepted | 2026-06-12 |
+| [0017](0017-feature-respin-grid-collectibles.md) | LIGHTS OUT respin grid renders collectibles, not entry symbols | Accepted | 2026-06-12 |

@@ -7,6 +7,107 @@ evergreen rules into `GOLDEN_RULES.md` via a Scott-reviewed PR.
 
 ## 2026-06-12
 
+- **SPOKEY PR2 presenter audit (auditor subagent, big-diff self-review) — 4
+  seams folded in, 0 high.** The semantic pass on the presenter diff verified the
+  core claims (collectibles-not-entry-symbols, first-spin-always-base confirmed
+  empirically, deterministic settle across 401 seeds, contained CueName drift)
+  and caught four real seams:
+  - **F1 (the important one — vacuous-green, AGAIN, in the presenter layer):**
+    `reveal.shownValue` was unit-tested AND mutation-probed (mutant #24) but had
+    ZERO callers — the presenter reimplemented the cover/show decision inline, so
+    the mutant killed against a function nobody called while the presenter's real
+    branch went unprobed. A probed orphan is vacuous coverage. **Rule: a pure
+    helper is not "the source of truth" until the presenter CALLS it.** Fixed:
+    `scene.ts` now calls `shownValue(...)` for the badge branch.
+  - **F2:** the hidden↔visible A/B was only half-pinned (`?feature=1` captured
+    the fully-revealed end-state only). Added `hiddenValues`/`featureRevealed`
+    scene options + a 4th baseline `spokey-feature-hidden` (covered "watch the
+    count" state, meter 00000) — both ends of the A/B are now visually locked.
+  - **F3:** removed the one `noNonNullAssertion` warning PR2 added (`drawMiniDigit`
+    real fallback).
+  - **F4:** the non-jackpot `win-celebrate` settle branch was dead in CI (the
+    forced seed always jackpots). `forceFeature(seed?)` now takes an explicit
+    seed; a browser test forces a non-jackpot seed and asserts win-celebrate, so
+    both settle branches run. `featureParams` is exported so tests predict seeds.
+  - Two HIGH from the *pure-logic* audit + four from the *presenter* audit, all
+    pre-merge: the two-stage meta-audit (logic before the presenter, then the
+    presenter diff) keeps paying for itself — both rounds found vacuous-green that
+    every green gate hid.
+
+- **SPOKEY PR2 presenter shipped — the feature is playable.** `scene.ts` gained
+  the LIGHTS OUT path: the board converts to a collectibles respin grid
+  (ADR-0017), value tiles lock in (font-free seven-seg badges), the flashlight
+  sweep reveals values (the `hiddenValues` A/B — covered vs shown), and it settles
+  or blacks out on a jackpot. Proximity is wired (ADR-0012): each base spin
+  advances the figure and arms the feature for the NEXT spin — never the current
+  one, so the first spin is always a clean base spin and the generic `verify.mjs`
+  smoke (one spin) still sees `spin-start`/`spin-settle`. Third visual baseline
+  committed (`spokey-feature-visible`, the full-board jackpot end-state with
+  values shown). `forceFeature` debug hook drives the feature deterministically;
+  the browser test asserts feature-trigger → rollup → terminal-cue ordering.
+- **Contract extended additively: `accumulator.values`** (parallel to `locked`,
+  reveal order) — the presenter needs each captured value to render the reveal,
+  and phases carry only cell indices. Same additive policy as PR1's `board`/
+  `total`; the FROZEN part (phase/kind/cue vocabulary) is untouched. `resolveSpin`
+  returns `values: []`, `resolveFeature` returns the per-tile values; the seed-7
+  oracle now also pins `values.length===20` and their sum===316.
+- **`sound.ts` gained 6 feature cues as placeholder beeps** (`feature-trigger`,
+  `lights-out-tick`, `swarm-tick`, `rollup`, `win-celebrate`, `jackpot`) so the
+  hook points + cue-ordering log are real in PR2; PR3 replaces the specs with the
+  synthesized cue-model (ADR-0015, ≥120ms attack) behind the same names. Note:
+  `sound.ts`'s `CueName` (placeholder/growing) and `contract.ts`'s `CueName` (the
+  eventual full vocab) are two types that overlap — PR3 unifies them via the
+  cue-model. The settle cue is narrowed (`=== 'jackpot' ? … : 'win-celebrate'`)
+  because `phase.cue` is the broad contract type.
+- **Deviation (WA #10): the presenter uses `setTimeout` scheduling, not a paused
+  GSAP timeline.** The plan/PR body said GSAP-timeline-driven; but the
+  load-bearing visual proof is a STATIC end-state frame (`?feature=1`), which
+  needs no mid-animation seek, so the timeline's seek-determinism benefit doesn't
+  apply here. setTimeout matches PR1's `spin()` and is `motionScale`-capped for
+  CI. GSAP-timeline deferred to if/when we screenshot mid-animation. Also: the
+  feature-trigger assertion lives in the SPOKEY browser test (deterministic
+  `forceFeature`), not the generic smoke (which only does one base spin).
+
+- **SPOKEY PR2 pure feature logic shipped + meta-audited before the presenter.**
+  Prototype-local (ADR-0004): `proximity.ts` (seed-deterministic figure approach,
+  ADR-0012), `holdwin.ts` (the classic reset-on-new / decrement-on-none respin
+  machine, jackpot at full board), `reveal.ts` (hidden↔visible A/B, ADR-0013),
+  and `resolveFeature` in `resolver.ts` (the whole hold&win sequence as a typed,
+  `maxRespins`-bounded phase script, ADR-0010). 95 unit tests; hand-trace of
+  seed 7 executed (18 phases → full-board jackpot, total 316).
+- **The pre-presenter meta-audit (standing step E) caught 2 HIGH seams the green
+  checks hid — the gate earned its keep again.** (1) **Mutation probe had ZERO
+  mutants on any PR2 module** — the 100% was vacuous for everything PR2 added.
+  This is the same vacuous-green class the retro built `canary` to kill, defeated
+  by *adding* logic without a probe rather than moving a target. Rule going
+  forward: a new pure module is not "mutation-probed" until it has its own mutant;
+  the score is per-target, not per-repo. Fixed: +15 PR2 mutants, 28/28 killed.
+  (2) **The hand-trace's appended "state-machine echo" was wrong** — it landed a
+  tile on an already-locked cell (index 1) and mislabeled the resulting decrement
+  as a "RESET". The committed phase-script was faithful (re-executed: seed 7 → 18
+  phases / 316 / jackpot) and the corrupt echo was never committed, but ADR-0010
+  makes the hand-trace load-bearing evidence, so a wrong echo is worse than none.
+  Fixed by replacing the printed echo with an **executable seed-7 oracle**
+  (`spokey-feature.test.ts`): total=316, locked=[0..19], 18 phases, jackpot pinned
+  as literals — a real independent oracle, stronger than a printed trace.
+- **MED findings folded in too:** a test passed for a FALSE reason — "no-hold
+  strip → board can never fill" is false because `rollRespin` lights free cells by
+  RNG regardless of symbol (seeds 49/63 DO jackpot that strip); replaced with a
+  `maxNewPerRespin:0` guaranteed-non-jackpot case. Removed a tautological
+  assertion (`accumulator.total === total` compares one variable to itself).
+- **Respins are symbol-blind — recorded as a DECISION, not patched (ADR-0017).**
+  The figure-arrival feature replaces the entry board with a respin grid: locked
+  cells render as captured-value collectibles, free cells go dark, entry filler is
+  left behind (as real hold&win reels work). This removes the "eye-pair locking
+  onto a mailbox" contradiction by construction and is the render rule the
+  presenter builds against. Added `cellCoord` (the tested inverse of `cellIndex`)
+  so the scene can map `accumulator.locked` back to `(reel,row)`.
+- **Clean under the red-team (held up):** boundedness for 3000 seeds, the
+  reset/decrement off-by-one, contract kind/cue validity (0 violations/3000), and
+  crucially proximity is pure + draws ZERO rng, so the base-spin `proximityStep`
+  hook does NOT shift the RNG stream — PR1 boards and the resolver test are
+  unaffected (verified: 95 green).
+
 - **Pre-PR2 retrospective + upgrade pass (Scott: "what did u learn and how can
   we upgrade").** Five durable lessons from PR #1/#2/#3: (1) a gate you've never
   seen fail is unverified — the trip-matrix is the asset, not the gates; (2)

@@ -132,6 +132,101 @@ const MUTATIONS = [
     find: '(p.reelDurationMs + r * p.reelStaggerMs) * drag',
     replace: 'p.reelDurationMs * drag',
   },
+  // --- SPOKEY: LIGHTS OUT feature modules (PR2) ---
+  // Added after the meta-audit flagged ZERO mutants on any PR2 module — the
+  // 100% score was vacuous for everything PR2 shipped (docs/LEARNINGS.md
+  // 2026-06-12). A new pure module is not "mutation-probed" until it has its
+  // own mutant; the score is per-target, not per-repo.
+  {
+    name: 'holdwin: respin counter increments instead of decrements (no-new path)',
+    file: 'src/prototypes/spokey-lights-out/holdwin.ts',
+    find: 'fresh.length > 0 ? respins : state.respinsLeft - 1',
+    replace: 'fresh.length > 0 ? respins : state.respinsLeft + 1',
+  },
+  {
+    name: 'holdwin: dedupe inverted — already-held cells lock again',
+    file: 'src/prototypes/spokey-lights-out/holdwin.ts',
+    find: 'const fresh = landed.filter((t) => !held.has(t.index));',
+    replace: 'const fresh = landed.filter((t) => held.has(t.index));',
+  },
+  {
+    name: 'holdwin: isComplete off-by-one (respinsLeft < 0 instead of <= 0)',
+    file: 'src/prototypes/spokey-lights-out/holdwin.ts',
+    find: 'return state.respinsLeft <= 0 || isJackpot(state);',
+    replace: 'return state.respinsLeft < 0 || isJackpot(state);',
+  },
+  {
+    name: 'holdwin: jackpot off-by-one (> instead of >= boardSize)',
+    file: 'src/prototypes/spokey-lights-out/holdwin.ts',
+    find: 'return state.tiles.length >= state.boardSize;',
+    replace: 'return state.tiles.length > state.boardSize;',
+  },
+  {
+    name: 'holdwin: holdTotal subtracts instead of summing',
+    file: 'src/prototypes/spokey-lights-out/holdwin.ts',
+    find: 'reduce((sum, t) => sum + t.value, 0)',
+    replace: 'reduce((sum, t) => sum - t.value, 0)',
+  },
+  {
+    name: 'holdwin: lockableCells matches NON-hold symbols (predicate inverted)',
+    file: 'src/prototypes/spokey-lights-out/holdwin.ts',
+    find: "if (holdSymbols.includes(col[row] ?? '')) out.push(cellIndex(reel, row, rows));",
+    replace: "if (!holdSymbols.includes(col[row] ?? '')) out.push(cellIndex(reel, row, rows));",
+  },
+  {
+    name: 'holdwin: cellCoord uses ceil — breaks the index inverse',
+    file: 'src/prototypes/spokey-lights-out/holdwin.ts',
+    find: 'return { reel: Math.floor(index / rows), row: index % rows };',
+    replace: 'return { reel: Math.ceil(index / rows), row: index % rows };',
+  },
+  {
+    name: 'proximity: step multiplies instead of dividing',
+    file: 'src/prototypes/spokey-lights-out/proximity.ts',
+    find: 'return sightingCount / stepsToArrive;',
+    replace: 'return sightingCount * stepsToArrive;',
+  },
+  {
+    name: 'proximity: advance subtracts the step (figure retreats)',
+    file: 'src/prototypes/spokey-lights-out/proximity.ts',
+    find: 'return clamp01(current + step);',
+    replace: 'return clamp01(current - step);',
+  },
+  {
+    name: 'proximity: arrival off-by-one (> instead of >= ARRIVE)',
+    file: 'src/prototypes/spokey-lights-out/proximity.ts',
+    find: 'return proximity >= ARRIVE;',
+    replace: 'return proximity > ARRIVE;',
+  },
+  {
+    name: 'reveal: hidden tile shown when NOT swept (condition inverted)',
+    file: 'src/prototypes/spokey-lights-out/reveal.ts',
+    find: 'if (hidden && !revealed) return null;',
+    replace: 'if (hidden && revealed) return null;',
+  },
+  {
+    name: 'reveal: visibleTotal accrual off-by-one (<= leaks the next tile)',
+    file: 'src/prototypes/spokey-lights-out/reveal.ts',
+    find: 'i < revealedCount && i < ordered.length',
+    replace: 'i <= revealedCount && i < ordered.length',
+  },
+  {
+    name: 'reveal: sweep order reversed (descending instead of reading order)',
+    file: 'src/prototypes/spokey-lights-out/reveal.ts',
+    find: '[...tiles].sort((a, b) => a.index - b.index)',
+    replace: '[...tiles].sort((a, b) => b.index - a.index)',
+  },
+  {
+    name: 'resolveFeature: jackpot/win settle cues swapped',
+    file: 'src/prototypes/spokey-lights-out/resolver.ts',
+    find: "cue: jackpot ? 'jackpot' : 'win-celebrate',",
+    replace: "cue: jackpot ? 'win-celebrate' : 'jackpot',",
+  },
+  {
+    name: 'resolveFeature: respin loop never runs (cap mutated to < 0)',
+    file: 'src/prototypes/spokey-lights-out/resolver.ts',
+    find: '!isComplete(state) && respins < p.maxRespins',
+    replace: '!isComplete(state) && respins < 0',
+  },
 ];
 
 function makeTemp() {

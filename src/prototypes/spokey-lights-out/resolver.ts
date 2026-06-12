@@ -4,8 +4,20 @@
 // phases (lock/respin/reveal/trigger) arrive in PR2. Placeholder outcomes only
 // (ADR-0001).
 
-import { mulberry32, pick } from '../../lib/rng';
+import { mulberry32, pick, randInt } from '../../lib/rng';
 import type { OutcomePhase, ResolvedOutcome } from './contract';
+import {
+  applyRespin,
+  type HoldTile,
+  holdTotal,
+  initHold,
+  isComplete,
+  isJackpot,
+  lockableCells,
+  rollValue,
+} from './holdwin';
+import { proximityStep, sightings } from './proximity';
+import { revealOrder } from './reveal';
 import { evaluateWays, type Paytable } from './ways';
 
 export interface SpinParams {
@@ -20,6 +32,10 @@ export interface SpinParams {
   nearMiss: boolean;
   /** scatter symbol whose 5+ count would trigger the feature (PR2). */
   scatter: string;
+  /** the figure symbol whose sightings advance proximity (ADR-0012). */
+  figure?: string;
+  /** figure sightings needed to arrive; drives the per-spin proximity step. */
+  stepsToArrive?: number;
 }
 
 /** Fill board[reel][row] from the seeded strip. */
@@ -68,11 +84,142 @@ export function resolveSpin(seed: number, p: SpinParams): ResolvedOutcome {
       durationMs: Math.round((p.reelDurationMs + r * p.reelStaggerMs) * drag),
     });
   }
+  // Figure proximity (ADR-0012): seed-deterministic, carried on the settle
+  // phase for the presenter to accumulate. No figure param ⇒ step 0 (base game).
+  const step = proximityStep(p.figure ? sightings(board, p.figure) : 0, p.stepsToArrive ?? 6);
   phases.push({
     kind: 'settle',
     cue: total > 0 ? 'win-celebrate' : undefined,
+    proximityStep: step,
     durationMs: 200,
   });
 
-  return { board, phases, total, accumulator: { locked: [], total }, seed };
+  return { board, phases, total, accumulator: { locked: [], total, values: [] }, seed };
+}
+
+// =====================================================================
+// LIGHTS OUT feature path (ADR-0010 resolve-then-present). Computes the WHOLE
+// hold&win sequence synchronously into a capped phase script; the presenter
+// just plays it. Bounded by `maxRespins` so CI wall-clock stays in budget.
+// =====================================================================
+
+export interface FeatureParams {
+  reels: number;
+  rows: number;
+  strip: readonly string[];
+  holdSymbols: readonly string[];
+  respins: number;
+  /** hard cap on respins so the emitted script length is bounded. */
+  maxRespins: number;
+  values: readonly number[];
+  /** most new tiles a single respin can land (keeps the climb gradual). */
+  maxNewPerRespin: number;
+  durations: {
+    trigger: number;
+    lock: number;
+    respin: number;
+    reveal: number;
+    jackpot: number;
+    settle: number;
+  };
+}
+
+/** Seeded subset of currently-free cells that newly light up this respin. */
+function rollRespin(
+  rng: () => number,
+  freeCells: readonly number[],
+  values: readonly number[],
+  maxNew: number,
+): HoldTile[] {
+  const pool = [...freeCells];
+  const k = randInt(rng, Math.min(maxNew, pool.length) + 1); // 0..min(maxNew,free)
+  // partial Fisher–Yates: pick k distinct free cells deterministically.
+  for (let i = 0; i < k; i++) {
+    const j = i + randInt(rng, pool.length - i);
+    const tmp = pool[i] as number;
+    pool[i] = pool[j] as number;
+    pool[j] = tmp;
+  }
+  return pool.slice(0, k).map((index) => ({ index, value: rollValue(rng, values) }));
+}
+
+export function resolveFeature(seed: number, p: FeatureParams): ResolvedOutcome {
+  const rng = mulberry32(seed);
+  const board = drawBoard(rng, p.reels, p.rows, p.strip);
+  const boardSize = p.reels * p.rows;
+  const phases: OutcomePhase[] = [];
+
+  // 1. the figure arrives → LIGHTS OUT.
+  phases.push({
+    kind: 'trigger',
+    cue: 'feature-trigger',
+    proximityStep: 0,
+    durationMs: p.durations.trigger,
+  });
+
+  // 2. entry board's value tiles lock.
+  const initialTiles: HoldTile[] = lockableCells(board, p.holdSymbols, p.rows).map((index) => ({
+    index,
+    value: rollValue(rng, p.values),
+  }));
+  let state = initHold(initialTiles, p.respins, boardSize);
+  phases.push({
+    kind: 'lock',
+    cells: state.tiles.map((t) => t.index),
+    cue: 'lights-out-tick',
+    durationMs: p.durations.lock,
+  });
+
+  // 3. seeded, capped respin loop.
+  let respins = 0;
+  while (!isComplete(state) && respins < p.maxRespins) {
+    respins += 1;
+    const held = new Set(state.tiles.map((t) => t.index));
+    const free: number[] = [];
+    for (let i = 0; i < boardSize; i++) if (!held.has(i)) free.push(i);
+    const landed = rollRespin(rng, free, p.values, p.maxNewPerRespin);
+    const before = state.tiles.length;
+    state = applyRespin(state, landed, p.respins);
+    phases.push({ kind: 'respin', cue: 'swarm-tick', durationMs: p.durations.respin });
+    if (state.tiles.length > before) {
+      phases.push({
+        kind: 'lock',
+        cells: state.tiles.slice(before).map((t) => t.index),
+        cue: 'lights-out-tick',
+        durationMs: p.durations.lock,
+      });
+    }
+  }
+
+  // 4. flashlight reveal sweep over the held tiles (reading order).
+  const ordered = revealOrder(state.tiles);
+  phases.push({
+    kind: 'reveal',
+    cells: ordered.map((t) => t.index),
+    cue: 'rollup',
+    durationMs: p.durations.reveal,
+  });
+
+  // 5. settle — full board is the blackout jackpot.
+  const jackpot = isJackpot(state);
+  const total = holdTotal(state); // single summation source (the tested helper)
+  phases.push({
+    kind: 'settle',
+    cue: jackpot ? 'jackpot' : 'win-celebrate',
+    durationMs: jackpot ? p.durations.jackpot : p.durations.settle,
+  });
+
+  // The final board shows the locked tiles' symbol over the entry layout; the
+  // accumulator carries the locked indices + captured total for the meters.
+  return {
+    board,
+    phases,
+    total,
+    accumulator: {
+      locked: ordered.map((t) => t.index),
+      total,
+      values: ordered.map((t) => t.value),
+    },
+    seed,
+  };
 }
