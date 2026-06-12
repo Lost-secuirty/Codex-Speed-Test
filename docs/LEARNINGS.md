@@ -7,6 +7,46 @@ evergreen rules into `GOLDEN_RULES.md` via a Scott-reviewed PR.
 
 ## 2026-06-12
 
+- **SPOKEY PR2 pure feature logic shipped + meta-audited before the presenter.**
+  Prototype-local (ADR-0004): `proximity.ts` (seed-deterministic figure approach,
+  ADR-0012), `holdwin.ts` (the classic reset-on-new / decrement-on-none respin
+  machine, jackpot at full board), `reveal.ts` (hidden↔visible A/B, ADR-0013),
+  and `resolveFeature` in `resolver.ts` (the whole hold&win sequence as a typed,
+  `maxRespins`-bounded phase script, ADR-0010). 95 unit tests; hand-trace of
+  seed 7 executed (18 phases → full-board jackpot, total 316).
+- **The pre-presenter meta-audit (standing step E) caught 2 HIGH seams the green
+  checks hid — the gate earned its keep again.** (1) **Mutation probe had ZERO
+  mutants on any PR2 module** — the 100% was vacuous for everything PR2 added.
+  This is the same vacuous-green class the retro built `canary` to kill, defeated
+  by *adding* logic without a probe rather than moving a target. Rule going
+  forward: a new pure module is not "mutation-probed" until it has its own mutant;
+  the score is per-target, not per-repo. Fixed: +15 PR2 mutants, 28/28 killed.
+  (2) **The hand-trace's appended "state-machine echo" was wrong** — it landed a
+  tile on an already-locked cell (index 1) and mislabeled the resulting decrement
+  as a "RESET". The committed phase-script was faithful (re-executed: seed 7 → 18
+  phases / 316 / jackpot) and the corrupt echo was never committed, but ADR-0010
+  makes the hand-trace load-bearing evidence, so a wrong echo is worse than none.
+  Fixed by replacing the printed echo with an **executable seed-7 oracle**
+  (`spokey-feature.test.ts`): total=316, locked=[0..19], 18 phases, jackpot pinned
+  as literals — a real independent oracle, stronger than a printed trace.
+- **MED findings folded in too:** a test passed for a FALSE reason — "no-hold
+  strip → board can never fill" is false because `rollRespin` lights free cells by
+  RNG regardless of symbol (seeds 49/63 DO jackpot that strip); replaced with a
+  `maxNewPerRespin:0` guaranteed-non-jackpot case. Removed a tautological
+  assertion (`accumulator.total === total` compares one variable to itself).
+- **Respins are symbol-blind — recorded as a DECISION, not patched (ADR-0017).**
+  The figure-arrival feature replaces the entry board with a respin grid: locked
+  cells render as captured-value collectibles, free cells go dark, entry filler is
+  left behind (as real hold&win reels work). This removes the "eye-pair locking
+  onto a mailbox" contradiction by construction and is the render rule the
+  presenter builds against. Added `cellCoord` (the tested inverse of `cellIndex`)
+  so the scene can map `accumulator.locked` back to `(reel,row)`.
+- **Clean under the red-team (held up):** boundedness for 3000 seeds, the
+  reset/decrement off-by-one, contract kind/cue validity (0 violations/3000), and
+  crucially proximity is pure + draws ZERO rng, so the base-spin `proximityStep`
+  hook does NOT shift the RNG stream — PR1 boards and the resolver test are
+  unaffected (verified: 95 green).
+
 - **Pre-PR2 retrospective + upgrade pass (Scott: "what did u learn and how can
   we upgrade").** Five durable lessons from PR #1/#2/#3: (1) a gate you've never
   seen fail is unverified — the trip-matrix is the asset, not the gates; (2)

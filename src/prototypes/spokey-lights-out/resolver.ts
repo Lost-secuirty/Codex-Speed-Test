@@ -9,6 +9,7 @@ import type { OutcomePhase, ResolvedOutcome } from './contract';
 import {
   applyRespin,
   type HoldTile,
+  holdTotal,
   initHold,
   isComplete,
   isJackpot,
@@ -201,7 +202,7 @@ export function resolveFeature(seed: number, p: FeatureParams): ResolvedOutcome 
 
   // 5. settle — full board is the blackout jackpot.
   const jackpot = isJackpot(state);
-  const total = ordered.reduce((sum, t) => sum + t.value, 0);
+  const total = holdTotal(state); // single summation source (the tested helper)
   phases.push({
     kind: 'settle',
     cue: jackpot ? 'jackpot' : 'win-celebrate',

@@ -54,13 +54,24 @@ describe('resolveFeature', () => {
     expect(revealAt).toBe(out.phases.length - 2); // reveal then settle
   });
 
-  it('reports locked cells in reveal (ascending index) order, total = sum', () => {
+  it('reports locked cells in reveal (ascending index) order, no duplicates', () => {
     const out = resolveFeature(7, base);
     const locked = out.accumulator.locked;
     expect([...locked].sort((a, b) => a - b)).toEqual(locked); // ascending
     expect(new Set(locked).size).toBe(locked.length); // no duplicate locks
-    expect(out.accumulator.total).toBe(out.total);
     expect(out.total).toBeGreaterThan(0);
+  });
+
+  it('matches the hand-traced seed-7 outcome (independent oracle, PR body)', () => {
+    // The hand-trace executed in the PR body: seed 7 → 18 phases, a full-board
+    // blackout jackpot, captured total 316. Pinned as literals so a wrong-but-
+    // stable resolver cannot pass the determinism tests silently (the F5 oracle).
+    const out = resolveFeature(7, base);
+    expect(out.phases).toHaveLength(18);
+    expect(out.accumulator.locked).toEqual(Array.from({ length: 20 }, (_, i) => i));
+    expect(out.total).toBe(316);
+    expect(out.accumulator.total).toBe(316);
+    expect(out.phases.at(-1)?.cue).toBe('jackpot');
   });
 
   it('flags a full board as the blackout jackpot', () => {
@@ -77,10 +88,15 @@ describe('resolveFeature', () => {
     expect(out.phases.at(-1)?.cue).toBe('jackpot');
   });
 
-  it('a non-full board settles with win-celebrate, not jackpot', () => {
-    // no lockable symbols on the strip → the board can never fill.
-    const noLocks: FeatureParams = { ...base, strip: ['rad', 'mainst', 'beacon', 'figure'] };
-    const out = resolveFeature(3, noLocks);
+  it('a board that cannot fill settles with win-celebrate, not jackpot', () => {
+    // maxNewPerRespin 0 ⇒ respins never add tiles, so the board can only hold
+    // the entry locks (always < 20 for this mixed strip) and the counter runs
+    // out → non-jackpot. (The earlier "no-hold strip" premise was FALSE: respins
+    // light free cells by RNG regardless of symbol, so that strip CAN jackpot on
+    // seeds 49/63 — caught by the meta-audit, F3.)
+    const noGrowth: FeatureParams = { ...base, maxNewPerRespin: 0 };
+    const out = resolveFeature(3, noGrowth);
+    expect(out.accumulator.locked.length).toBeLessThan(base.reels * base.rows);
     expect(out.phases.at(-1)?.cue).toBe('win-celebrate');
   });
 });

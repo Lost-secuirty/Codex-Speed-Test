@@ -15,6 +15,12 @@ export function cellIndex(reel: number, row: number, rows: number): number {
   return reel * rows + row;
 }
 
+/** Inverse of `cellIndex`: a flat index back to (reel, row). The presenter maps
+ *  `accumulator.locked` indices back to board cells through this. */
+export function cellCoord(index: number, rows: number): { reel: number; row: number } {
+  return { reel: Math.floor(index / rows), row: index % rows };
+}
+
 /** A locked tile: its flat board index and its captured placeholder value. */
 export interface HoldTile {
   index: number;

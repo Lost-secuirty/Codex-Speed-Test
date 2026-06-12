@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { mulberry32 } from '../../src/lib/rng';
 import {
   applyRespin,
+  cellCoord,
   cellIndex,
   type HoldTile,
   holdTotal,
@@ -14,11 +15,21 @@ import {
 
 // LIGHTS OUT hold&win state machine (ADR-0009). Mutation-probe prey.
 
-describe('cellIndex', () => {
+describe('cellIndex / cellCoord', () => {
   it('flattens reel/row as reel*rows + row', () => {
     expect(cellIndex(0, 0, 4)).toBe(0);
     expect(cellIndex(2, 3, 4)).toBe(11);
     expect(cellIndex(4, 0, 4)).toBe(16);
+  });
+
+  it('cellCoord is the exact inverse of cellIndex (round-trips every cell)', () => {
+    const rows = 4;
+    for (let reel = 0; reel < 5; reel++) {
+      for (let row = 0; row < rows; row++) {
+        const idx = cellIndex(reel, row, rows);
+        expect(cellCoord(idx, rows)).toEqual({ reel, row });
+      }
+    }
   });
 });
 
