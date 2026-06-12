@@ -25,6 +25,26 @@ export const config = {
     mainst: [0, 0, 0, 5, 10, 30],
   } satisfies Paytable,
   timing: { reelDurationMs: 620, reelStaggerMs: 170 },
+  // LIGHTS OUT hold&win feature (PR2). Placeholder values only — NO RTP
+  // (ADR-0001). The figure "arrives" over `stepsToArrive` sightings (ADR-0012),
+  // then value tiles lock and respin with the classic reset; `maxRespins` caps
+  // the outcome script so the presenter stays inside the CI wall-clock budget.
+  feature: {
+    stepsToArrive: 6,
+    holdSymbols: ['eye', 'mailbox', 'porch', 'web'],
+    respins: 3,
+    maxRespins: 8,
+    values: [2, 5, 10, 25, 50],
+    triggerScatters: 6,
+    // per-phase presenter budgets (reducedMotion scales these via timeScale).
+    triggerMs: 420,
+    lockMs: 240,
+    respinMs: 380,
+    revealMs: 220,
+    jackpotMs: 600,
+    settleMs: 320,
+    maxNewPerRespin: 3,
+  },
   cabinet: { chrome: 0x1a1c24, rust: 0x3a2418, edge: 0x2c3048 },
   meter: { on: 0xffb000, dim: 0x4a3300 }, // phosphor amber (ADR-0011 readability)
   button: { idle: 0x6a1f1f, press: 0x3a1010, glyph: 0xe5484d },
