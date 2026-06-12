@@ -7,6 +7,72 @@ evergreen rules into `GOLDEN_RULES.md` via a Scott-reviewed PR.
 
 ## 2026-06-12
 
+- **Pre-PR2 retrospective + upgrade pass (Scott: "what did u learn and how can
+  we upgrade").** Five durable lessons from PR #1/#2/#3: (1) a gate you've never
+  seen fail is unverified — the trip-matrix is the asset, not the gates; (2)
+  **vacuous green** is its own bug class (a check that passes while inert) — two
+  shipped (audit on a bad ref, mutation probe decaying as targets move), both
+  now fail loudly; (3) don't port platform assumptions across environments (the
+  audit loop ran away because GITHUB_TOKEN pushes create approval-held runs
+  here, not none); (4) the ninth meta-auditor red-teaming the eight experts was
+  the highest-ROI design move (found 3 spec gaps the panel missed); (5) when
+  evidence is weak, ship a toggle not a claim. Honest caveat: the cross-Chromium
+  dark-frame green was partly luck (matched twice, never stress-tested).
+- **NEW GATE — `npm run canary` (gate-canary, ADR-0016).** Fossilizes the
+  trip-matrix: each cheap gate runs against a known-bad fixture and the canary
+  FAILS unless the gate does. Covers lint core rule + all 3 GritQL plugins,
+  typecheck, the visual comparator (re-stages the historical dark-purple escape
+  against the LIVE thresholds parsed from vitest.config.ts), the drift-audit
+  bad-ref refusal, and the scanner self-test. Wired into preflight (after
+  mutation) and CI's checks job. Tripped at birth: loosen threshold to 0.2 +
+  drop a plugin → 2/10 canaries fail, as designed. Construction rule: canaries
+  use the REAL config (copied verbatim / parsed live), never a private copy —
+  testing a private copy is itself vacuous. `pixelmatch`+`pngjs` promoted from
+  transitive to explicit devDeps (relying on hoisting was a silent seam).
+- **Plan/SPEC reconciled to the PR1 deviation (no more re-litigating mid-build).**
+  PR2's `{holdwin,reveal,proximity}.ts` and PR3's `cue-model.ts` are
+  **prototype-local**, NOT `src/lib/feature/**` as the original plan said —
+  `src/lib` is shared/prototype-agnostic only (ADR-0004); a src/lib module
+  importing the prototype's `contract.ts` is dependency inversion. Amended in
+  the plan file + SPEC.md so PR2 starts from the right tree.
+- **Research sweep (stack freshness, before PR2/PR3).** pixi.js 8.19.0 and
+  vitest 4.1.8 are the latest published (verified vs npm registry); Biome 2.4.16
+  current; no PixiJS v9. (a) **Vitest browser flake** vitest-dev/vitest#9635 —
+  "Vitest failed to find the current suite" ~1 in 5 GH-Actions runs, never local,
+  rerun passes; if CI shows that exact error, rerun, don't weaken baselines. (b)
+  **PR2 determinism:** drive GSAP manually — `gsap.ticker.remove(gsap.updateRoot)`
+  + `gsap.updateRoot(t)` on a fixed clock; build lock/respin as ONE paused
+  timeline with cues as `timeline.call()` at positions; raw setTimeout breaks
+  seek-to-frame, so move the scaffold's setTimeout scheduling to a timeline in
+  PR2. (c) **PR3 audio testing:** OfflineAudioContext is deterministic per-engine
+  but NOT bit-exact across browsers — assert derived metrics with tolerance
+  (attack ≥120ms from the rendered envelope, per-bus RMS, spectra), never golden
+  buffers; `AudioContext.setSinkId({type:'none'})` (Chrome 110+) gives a silent
+  sink with a running clock for device-less CI. (d) **Shepard–Risset** =
+  octave-spaced oscillators under a Gaussian log-frequency envelope, exp ramps,
+  wrap an octave down at the edge; **missing-fundamental bass** = synth integer
+  harmonics + high-pass the true low end (commercial "virtual bass"); granular
+  voice-cap = implement steal-oldest (no public pattern). (e) **Watch item: Skia
+  Graphite** — Chrome's new rasterizer, Linux not yet default; when CI's
+  Chrome-for-Testing flips it on, expect wholesale dark-baseline drift → that's a
+  regenerate-on-CI event (visual-baseline.yml, ADR-0011), not a code bug.
+- **EVIDENCE round 2 (before/after) — 9 promotions, 3 citation fixes.** Scott's
+  "source from studies + popularity polls, before and after" rule run as a
+  re-verification pass. Tooling gotcha: WebFetch was globally 403-blocked
+  (every host); promotions rest on WebSearch snippet synthesis from independent
+  hosts. Promoted to VERIFIED (abstract): Carleton 2016 (vol corrected 39→41),
+  Grupe & Nitschke 2013, Lehne & Koelsch 2015, Andersen/Clasen 2020, Piepenbrock
+  2013, Dixon 2013 (24/15%, n=96), Plomp & Levelt 1965, Trevor/Arnal/Frühholz
+  2020, Blumenthal 1986; hold&win market → VERIFIED (trade-press, EKG/GGB
+  #1/#2 premium-leased). **3 citation errors fixed in EVIDENCE.md:** the
+  scream-roughness paper is Trevor/Arnal/Frühholz 2020 not "Trevino/Blumstein";
+  the near-miss 2024 reps are Palmer/Ferrari/Clark 2024 *Psych. Addict. Behav.*
+  not Barton/Sescousse in *J. Gambling Studies*; and "near-miss persistence
+  fails to replicate" overstated it — Palmer 2024 replicated motivation/speed/
+  bet-size, only valence flipped (reframed "mixed"). No design decision
+  contradicted; Blumenthal 1986 newly quantifies the ≥120ms rule (full
+  mitigation ~141–220ms).
+
 - **SPOKEY PR1 (base game) shipped.** 5×4 ways board, diegetic rusted cabinet,
   seven-segment vector meters, darkness-as-data lighting, the `?lightsOn=1`
   debug toggle, both visual baselines. Pure modules (`src/lib/rng.ts` +

@@ -14,37 +14,47 @@ session (2026-06-12). Grades: **VERIFIED** (read it / its abstract), **SECONDARY
 > orthogonal to their justifications, so it survives the removal of almost any
 > single source. Where a lever rests on weak evidence, it ships as a toggle.
 
+> **Round 2 (2026-06-12, before/after):** every SECONDARY row was re-verified
+> against independent sources (PubMed, Frontiers, Sage, JASA, GREO, NN/g,
+> trade press). Grades below show `OLD → NEW (R2)` where they moved. Tooling
+> honesty: direct page fetches were globally 403-blocked in round 2, so
+> promotions rest on abstract-level snippet reads from independent hosts —
+> "VERIFIED (abstract)" per the rubric, no full texts. Outcome: 9 promotions,
+> 3 honest holds, **3 citation errors found and fixed in place** (flagged
+> "R2-corrected"), and no design decision contradicted. The round-2 record is
+> at the bottom of this file.
+
 ## Game design
 
 | Claim (→ where it lands) | Source | Grade |
 | --- | --- | --- |
 | Near-misses recruit win-related circuitry, raise motivation | Clark et al. 2009, *Neuron* 61:481 (fMRI) | VERIFIED |
-| Near-miss **persistence** effect fails to replicate → demote to flavor (ADR-0014) | Barton/Sescousse et al. 2020, *J. Gambling Studies*; 2024 conceptual reps (1 of 3) | SECONDARY |
+| Near-miss replication picture is **mixed** → demote to flavor/toggle (ADR-0014): the 2024 conceptual reps *replicated* motivation-to-continue, speed, and bet-size effects; the **valence** hypothesis flipped and long-run persistence stays contested | Palmer, Ferrari & Clark 2024, *Psych. Addict. Behav.* 38(6):716–727 (**R2-corrected** — round 1 misattributed this to Barton/Sescousse in *J. Gambling Studies* and overstated "fails to replicate") | SECONDARY → VERIFIED (abstract, R2) |
 | Anticipatory dopamine peaks at **maximum uncertainty** (backs hidden-value engine) | Fiorillo, Tobler & Schultz 2003, *Science* | VERIFIED (abstract) |
 | Stop buttons inflate illusion-of-control (87% believed they could influence symbols) | Ladouceur & Sévigny 2005, *J. Gambling Studies* | VERIFIED (abstract) |
 | Faster play → worse inhibition / more harm; UK capped slots ≥2.5s | Harris & Griffiths 2018, *J. Gambling Studies* (review) | VERIFIED (abstract) |
-| Hold&win is a huge, surging market (Lightning Link progenitor, hundreds of clones; values **shown**) | Aristocrat / trade trackers (SlotCatalog, CDC Gaming) | SECONDARY |
+| Hold&win is a huge, surging market (Lightning Link progenitor; values **shown**) | EKG Game Performance Report May 2024 via GGB Magazine: Dragon Link & Lightning Link **#1/#2 top-grossing premium-leased**, "highest-yielding game families in the industry"; "a must-have for all major suppliers" (R2). The granular Eilers & Krejcik mechanic-preference tables stay paywalled; "hundreds of clones" stays uncounted | SECONDARY → VERIFIED (trade-press, R2) |
 | **No evidence hidden-value beats visible** → build it as A/B (ADR-0013) | (absence finding — searched, not found) | VERIFIED (null) |
 
 ## Horror / dread
 
 | Claim | Source | Grade |
 | --- | --- | --- |
-| Fear of the unknown is the fundamental fear ("perceived absence of information") | Carleton 2016, *J. Anxiety Disorders* 39 | SECONDARY |
-| Uncertainty about future threat drives anticipatory anxiety | Grupe & Nitschke 2013, *Nat. Rev. Neuroscience* 14:488 | SECONDARY |
-| Suspense = a prediction state from instability/uncertainty | Lehne & Koelsch 2015, *Frontiers in Psychology* | SECONDARY |
-| Recreational fear is an **inverted-U** (too little = boring) → restraint frames peaks | Andersen/Clasen et al. 2020, *Psychological Science* (Aarhus haunted house, N=110) | SECONDARY |
+| Fear of the unknown is the fundamental fear ("perceived absence of information") | Carleton 2016, *J. Anxiety Disorders* 41:5–21 (R2: volume corrected from 39) | SECONDARY → VERIFIED (abstract, R2) |
+| Uncertainty about future threat drives anticipatory anxiety | Grupe & Nitschke 2013, *Nat. Rev. Neuroscience* 14:488–501 (R2: UAMA model confirmed) | SECONDARY → VERIFIED (abstract, R2) |
+| Suspense = a prediction state from instability/uncertainty | Lehne & Koelsch 2015, *Frontiers in Psychology* ("Toward a general psychological model of tension and suspense") | SECONDARY → VERIFIED (abstract, R2) |
+| Recreational fear is an **inverted-U** (too little = boring) → restraint frames peaks | Andersen, Schjoedt, Clasen et al. 2020, *Psychological Science* "Playing With Fear" (Aarhus haunted house, N=110) | SECONDARY → VERIFIED (abstract, R2) |
 | Amygdala response **decrements** with repetition → "one pair of eyes, not twenty" | Plichta et al. 2014, *NeuroImage* | VERIFIED (abstract) |
-| Implied > shown monster; creeping dread ≠ startle | Martin 2019, *Frontiers in Psychology* | SECONDARY |
+| Implied > shown monster; creeping dread ≠ startle | Martin 2019, *Frontiers in Psychology* 10:2298 (R2: the review is real and confirmed; the specific implied>shown sub-claim is section-level and stayed unread — honest hold) | SECONDARY (held, R2) |
 
 ## Player UX
 
 | Claim | Source | Grade |
 | --- | --- | --- |
 | Non-text UI / meaningful graphics need ≥3:1 contrast (the silhouette floor) | WCAG 2.1 SC 1.4.11 (W3C / Deque) | VERIFIED (multi-source) |
-| Dark-on-light reads faster than light-on-dark → dark UI starts at a deficit | Piepenbrock et al. 2013, *Ergonomics* (via NN/g) | SECONDARY |
+| Dark-on-light reads faster than light-on-dark → dark UI starts at a deficit | Piepenbrock et al. 2013, *Ergonomics* 56(7) (R2: confirmed for acuity + proofreading, both age groups; companion 2014 pupil-size paper) | SECONDARY → VERIFIED (abstract, R2) |
 | **Crowding**, not acuity, limits recognition in clutter → anti-dense-grid | Pelli & Tillman 2008; Bouma-law revisions | VERIFIED (abstract) |
-| Win **sound** raises arousal + win-overestimation (24% vs 15%) | Collins/Harrigan/Dixon 2013/14, *J. Gambling Studies* | SECONDARY (press numbers) |
+| Win **sound** raises arousal + win-overestimation (24% vs 15%) | Dixon, Harrigan, Santesso, Graydon, Fugelsang & Collins 2013, *J. Gambling Studies* (R2: exact numbers confirmed via GREO synopsis + Springer abstract, n=96) | SECONDARY → VERIFIED (abstract, R2) |
 | **Sound** makes losses-disguised-as-wins feel like wins; negative sound unmasks them | Dixon et al. 2010 / 2015 / 2020 (LDW series) | VERIFIED (venue) |
 | HUD removal raises immersion **for experts** (diegetic framing, with a novice caveat) | Iacovides, Cox et al. 2015, CHI PLAY | VERIFIED |
 | Pacing 2.2–2.6s was **craft lore**, not evidence → moved to ~2.5–3.0s | (flagged by FLOOR as unsupported) | LORE |
@@ -53,11 +63,11 @@ session (2026-06-12). Grades: **VERIFIED** (read it / its abstract), **SECONDARY
 
 | Claim | Source | Grade |
 | --- | --- | --- |
-| Sensory dissonance/roughness peaks ~¼ critical band (the unease lever) | Plomp & Levelt 1965; Zwicker & Fastl | SECONDARY |
-| Nonlinear/chaotic vocal features rate as fearful (scream signature) | Trevino/Blumstein 2020, *JASA* 147(6) | SECONDARY |
-| Slow-onset drones engage sustained anxiety (BNST), not phasic startle | startle-reflex literature | SECONDARY |
-| Startle is gated by **rise-time** → **≥120ms attack** rule | acoustic-reflex literature | SECONDARY |
-| Shepard endless-rise = unresolved tension (→ figure-proximity cue) | Shepard 1964 | VERIFIED (illusion) / SECONDARY (anxiety) |
+| Sensory dissonance/roughness peaks ~¼ critical band (the unease lever) | Plomp & Levelt 1965, *JASA* 38:548–560 (R2: confirmed; open PDF exists at mpi.nl); Zwicker & Fastl | SECONDARY → VERIFIED (abstract, R2) |
+| Nonlinear/chaotic roughness = scream signature, mimicked by scary music | Trevor, Arnal & Frühholz 2020, *JASA* 147(6):EL540 (**R2-corrected** — round 1 misattributed to "Trevino/Blumstein"; Blumstein's related work is the 2010 *Biology Letters* nonlinear-soundtracks paper) | SECONDARY → VERIFIED (abstract, R2) |
+| Slow-onset drones engage sustained anxiety (BNST), not phasic startle | startle-reflex literature (R2: no single primary BNST-drone source surfaced — honest hold; the rise-time half is now verified below) | SECONDARY (held, R2) |
+| Startle is gated by **rise-time** → **≥120ms attack** rule | Blumenthal 1986, *Psychophysiology* (R2: startle declines as rise-time grows; full mitigation needs ~141–220ms, so ≥120ms is sound and slightly conservative — note 140ms+ as the fully-no-startle floor) | SECONDARY → VERIFIED (abstract, R2) |
+| Shepard endless-rise = unresolved tension (→ figure-proximity cue) | Shepard 1964 (R2: the *anxiety* half is craft-corroborated — Zimmer’s *Dunkirk* Shepard-scale, "legitimate anxiety" — but no controlled study surfaced) | VERIFIED (illusion) / SECONDARY (anxiety, held R2) |
 | Missing fundamental gives felt low-end on small speakers (replaces infrasound) | virtual-pitch perception | VERIFIED (perception) |
 | **The 19Hz "fear frequency" is a myth** — single unreplicated anecdote; use missing fundamental instead | Tandy & Lawrence 1998 + skeptical replications; MacEwan 2026 found only subtle effects requiring a high-SPL subwoofer | MYTH (rejected) |
 
@@ -92,3 +102,39 @@ Per-expert upgrades adopted: FREQ cites implementable facts not unread papers;
 DREAD's arousal curve is mapped to audio phases; FOLEY's buses get named
 contours; SYNTH's CPU tuning becomes a build-time checklist; JINGLE gets a 100ms
 "punch floor"; the three live tensions are surfaced in SPEC.md.
+
+## Round 2 — before/after (2026-06-12)
+
+Scott's "source findings from scientific studies and popularity polls, before
+and after" rule, executed as a dedicated re-verification pass over every
+SECONDARY row. Method honesty: direct page fetches were globally 403-blocked
+this session, so promotions rest on abstract-level snippet reads from
+independent hosts (PubMed, Frontiers, Sage, JASA, GREO, NN/g, GGB) — enough for
+"VERIFIED (abstract)" per the rubric, no full texts.
+
+**Outcome:** 9 promotions, 3 honest holds, 3 citation errors corrected in place.
+
+- **Promoted to VERIFIED (abstract):** Carleton 2016 (vol. corrected to 41:5–21),
+  Grupe & Nitschke 2013, Lehne & Koelsch 2015, Andersen/Schjoedt/Clasen 2020,
+  Piepenbrock 2013, Dixon et al. 2013 (24% vs 15%, n=96 confirmed), Plomp &
+  Levelt 1965, Trevor/Arnal/Frühholz 2020, Blumenthal 1986. **Promoted to
+  VERIFIED (trade-press):** hold&win market dominance (EKG GPR May 2024 via GGB —
+  Dragon/Lightning Link #1/#2 premium-leased).
+- **Held SECONDARY (honest):** Martin 2019 (review real; the implied>shown
+  sub-claim is section-level and stayed unread), slow-onset/BNST drone
+  attribution, the Shepard *anxiety* half (craft-corroborated, no lab study).
+- **Citation errors corrected:** (1) the scream-roughness JASA paper is
+  **Trevor, Arnal & Frühholz 2020**, not "Trevino/Blumstein"; (2) the near-miss
+  2024 reps are **Palmer, Ferrari & Clark 2024, *Psych. Addict. Behav.*
+  38(6):716–727**, not Barton/Sescousse in *J. Gambling Studies*; (3) that row's
+  "persistence fails to replicate" overstated it — Palmer 2024 *replicated*
+  motivation/speed/bet-size; only the *valence* hypothesis flipped, so it now
+  reads "mixed picture." None of this contradicts a design decision — the
+  `nearMiss` A/B toggle is, if anything, better justified by mixed literature,
+  and Blumenthal 1986 newly *quantifies* the ≥120ms attack rule (full startle
+  mitigation ~141–220ms).
+- **Popularity dimension (was thin):** hold&win is independently the top-earning
+  mechanic family in the premium-leased category (EKG/GGB, VERIFIED trade-press);
+  the granular Eilers & Krejcik mechanic-preference tables stay subscriber-
+  paywalled, and dark/horror-slot "popularity" is affiliate-marketing LORE
+  (directional only, not citable).
