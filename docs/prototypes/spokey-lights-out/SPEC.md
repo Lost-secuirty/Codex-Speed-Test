@@ -85,10 +85,22 @@ debug query (forces visibility 1.0 for the load-bearing baseline).
 
 resolve-then-present (ADR-0010): a pure resolver emits the typed `ResolvedOutcome`
 script ([`src/prototypes/spokey-lights-out/contract.ts`](../../../src/prototypes/spokey-lights-out/contract.ts));
-a dumb GSAP timeline plays it. Darkness is data, not shaders (ADR-0011).
-Proximity is seed-deterministic session state (ADR-0012). Pure modules carry the
-logic: `rng.ts`, `reels/ways.ts`, `feature/{holdwin,reveal,proximity}.ts`,
-`feature/resolver.ts`, `render/visibility.ts`, `audio/cue-model.ts`.
+a dumb presenter plays it. From PR2 on, the presenter is **one paused GSAP
+timeline** with cues as `timeline.call()` at positions, driven deterministically
+(`gsap.updateRoot`) — never raw `setTimeout`, or seeking to a fixed frame for
+screenshots skips cues (research sweep, LEARNINGS 2026-06-12; PR1's
+setTimeout scheduling was the scaffold-compatible interim). Darkness is data,
+not shaders (ADR-0011). Proximity is seed-deterministic session state
+(ADR-0012).
+
+**Module placement** (reconciled to the PR1 deviation, LEARNINGS 2026-06-12):
+SPOKEY-specific pure logic lives in the **prototype dir** — `ways.ts`,
+`visibility.ts`, `resolver.ts` (merged), then `holdwin.ts`, `reveal.ts`,
+`proximity.ts` (PR2) and `cue-model.ts` (PR3) follow the same pattern.
+`src/lib/**` is for genuinely shared, prototype-agnostic code only (ADR-0004) —
+so far just `rng.ts`; PR3's thin WebAudio `playback.ts` graduates only if it
+stays free of SPOKEY types. Every pure module is unit-tested and
+mutation-probed regardless of where it lives.
 
 ## Tensions surfaced & resolved (the meta-audit's point)
 

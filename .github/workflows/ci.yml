@@ -1,7 +1,8 @@
 name: CI
 
-# Gate: lint + typecheck + unit + mutation + build on every push and PR,
-# plus the browser (visual regression) and rendered-app smoke jobs.
+# Gate: lint + typecheck + unit + mutation + gate-canary + build on every
+# push and PR, plus the browser (visual regression) and rendered-app smoke
+# jobs.
 # The dev container's network policy blocks the Playwright browser
 # download — CI is where the browser gates are authoritative.
 
@@ -29,6 +30,7 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       - run: npm run mutation
+      - run: npm run canary
       - run: npm run build
       - name: Upload build
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

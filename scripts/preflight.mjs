@@ -66,6 +66,7 @@ ok = run('lint', 'npm', ['run', 'lint:ci']) && ok;
 ok = run('typecheck', 'npm', ['run', 'typecheck']) && ok;
 ok = run('unit', 'npm', ['test']) && ok;
 ok = run('mutation', 'npm', ['run', 'mutation']) && ok;
+ok = run('gate canary', 'npm', ['run', 'canary']) && ok;
 
 const chromium = resolveChromium();
 if (chromium) {
