@@ -227,6 +227,55 @@ const MUTATIONS = [
     find: '!isComplete(state) && respins < p.maxRespins',
     replace: '!isComplete(state) && respins < 0',
   },
+  // --- SPOKEY audio pure layer (PR3, ADR-0015) — every law gets a mutant ---
+  {
+    name: 'audio: the startle gate stops clamping (attack floor dropped)',
+    file: 'src/lib/audio/cue-model.ts',
+    find: 'return attackMs < floor ? floor : attackMs;',
+    replace: 'return attackMs;',
+  },
+  {
+    name: 'audio: win gain RISES with proximity (dread inverted)',
+    file: 'src/lib/audio/cue-model.ts',
+    find: 'return 1 - (1 - f) * p;',
+    replace: 'return f + (1 - f) * p;',
+  },
+  {
+    name: 'audio: swarm voice cap dropped (CPU budget unbounded)',
+    file: 'src/lib/audio/cue-model.ts',
+    find: 'return wanted > cap ? cap : Math.floor(wanted);',
+    replace: 'return Math.floor(wanted);',
+  },
+  {
+    name: 'audio: LDW threshold inclusive (at-threshold win flagged ldw)',
+    file: 'src/lib/audio/cue-model.ts',
+    find: "if (total < ldwThreshold) return honest ? 'ldw-honest' : 'ldw';",
+    replace: "if (total <= ldwThreshold) return honest ? 'ldw-honest' : 'ldw';",
+  },
+  {
+    name: 'audio: shepard window inverted (loud edges, silent center)',
+    file: 'src/lib/audio/cue-model.ts',
+    find: 'return 0.5 - 0.5 * Math.cos(2 * Math.PI * p);',
+    replace: 'return 0.5 + 0.5 * Math.cos(2 * Math.PI * p);',
+  },
+  {
+    name: 'audio: arousal curve collapses at approach (0.8 → 0.3)',
+    file: 'src/lib/audio/cue-model.ts',
+    find: 'approach: 0.8,',
+    replace: 'approach: 0.3,',
+  },
+  {
+    name: 'spokey cues: the trigger becomes a bright fanfare (arp, not cut-swell)',
+    file: 'src/prototypes/spokey-lights-out/cues.ts',
+    find: "kind: 'cut-swell',\n    freq: 66,",
+    replace: "kind: 'arp',\n    freq: 66,",
+  },
+  {
+    name: 'spokey resolver: LDW params ignored at settle',
+    file: 'src/prototypes/spokey-lights-out/resolver.ts',
+    find: 'cue: settleCue(total, p.ldwThreshold ?? 0, p.ldwHonest ?? false),',
+    replace: 'cue: settleCue(total, 0, false),',
+  },
 ];
 
 function makeTemp() {

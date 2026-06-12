@@ -84,3 +84,31 @@ describe('resolveSpin', () => {
     }
   });
 });
+
+describe('resolveSpin LDW settle cues (ADR-0014, PR3)', () => {
+  it('marks a below-threshold win as ldw / ldw-honest by flag', () => {
+    // find seeds for a small win and a big win under the greedy paytable
+    let small = -1;
+    let big = -1;
+    const pt = { eye: [0, 0, 0, 5, 10, 25] };
+    for (let s = 1; s < 3000 && (small < 0 || big < 0); s++) {
+      const t = resolveSpin(s, { ...params, paytable: pt }).total;
+      if (t > 0 && t < 20 && small < 0) small = s;
+      if (t >= 20 && big < 0) big = s;
+    }
+    expect(small).toBeGreaterThan(0);
+    expect(big).toBeGreaterThan(0);
+    const ldwParams = { ...params, paytable: pt, ldwThreshold: 20 };
+    expect(resolveSpin(small, ldwParams).phases.at(-1)?.cue).toBe('ldw');
+    expect(resolveSpin(small, { ...ldwParams, ldwHonest: true }).phases.at(-1)?.cue).toBe(
+      'ldw-honest',
+    );
+    expect(resolveSpin(big, ldwParams).phases.at(-1)?.cue).toBe('win-celebrate');
+    expect(resolveSpin(big, { ...ldwParams, ldwHonest: true }).phases.at(-1)?.cue).toBe(
+      'win-celebrate',
+    );
+  });
+
+  // (the unset-threshold legacy path is already pinned by the PR1 test
+  // 'only emits the win-celebrate cue when total > 0' above — audit L4.)
+});

@@ -4,6 +4,7 @@
 // phases (lock/respin/reveal/trigger) arrive in PR2. Placeholder outcomes only
 // (ADR-0001).
 
+import { settleCue } from '../../lib/audio/cue-model';
 import { mulberry32, pick, randInt } from '../../lib/rng';
 import type { OutcomePhase, ResolvedOutcome } from './contract';
 import {
@@ -36,6 +37,10 @@ export interface SpinParams {
   figure?: string;
   /** figure sightings needed to arrive; drives the per-spin proximity step. */
   stepsToArrive?: number;
+  /** a "win" below this is a loss-disguised-as-win (ADR-0014). 0 = off. */
+  ldwThreshold?: number;
+  /** honest mode unmasks LDWs with a negative cue instead of celebration. */
+  ldwHonest?: boolean;
 }
 
 /** Fill board[reel][row] from the seeded strip. */
@@ -89,7 +94,9 @@ export function resolveSpin(seed: number, p: SpinParams): ResolvedOutcome {
   const step = proximityStep(p.figure ? sightings(board, p.figure) : 0, p.stepsToArrive ?? 6);
   phases.push({
     kind: 'settle',
-    cue: total > 0 ? 'win-celebrate' : undefined,
+    // LDW selection is pure cue-model law (ADR-0014): below-threshold wins get
+    // the ldw cue (or the honest unmask); threshold 0 keeps legacy behavior.
+    cue: settleCue(total, p.ldwThreshold ?? 0, p.ldwHonest ?? false),
     proximityStep: step,
     durationMs: 200,
   });

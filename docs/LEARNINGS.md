@@ -7,6 +7,52 @@ evergreen rules into `GOLDEN_RULES.md` via a Scott-reviewed PR.
 
 ## 2026-06-12
 
+- **SPOKEY PR3 meta-audit — 4 HIGH found pre-push, all folded in.** The audit
+  rhythm caught real semantic rot a third time:
+  (1) **Biome reformat orphaned a mutant mid-build** — formatting `cues.ts`
+  multi-line broke a single-line find string; the probe's skip-fail rule went
+  red within minutes (the gate worked). Rule: `lint:fix` FIRST, then copy
+  probe find-strings from the formatted file.
+  (2) **The bed died at 6s** — "ignites once and never fully stops" was a
+  phantom claim: playback scheduled `stop()` on every source including the
+  drone. `CueIntent.sustain` added; an 8s OfflineAudioContext render now
+  asserts the bed is still audible at 7–8s.
+  (3) **Vacuous-green, round three:** `arousalLevel` + `setBusLevel` were a
+  tested law with a DEAD consumer seam (no facade in sound.ts, no caller in
+  the scene, no mutant). Now wired end-to-end (trigger/lock/hold/approach/idle
+  drive the bed) + an AROUSAL mutant; cut-swell restores the bed to its
+  PRE-CUT level instead of stomping arousal with a hardcoded 1.
+  (4) **A tautological test:** asserting `clampAttack(x) ≥ 120` can never fail
+  — composing the law with the data tests neither. The table test now pins RAW
+  attack values, and a synthetic 10ms-attack render proves the clamp at the
+  audio edge.
+  Also folded: accelerating reveal tick-up (SPEC promised it; one rollup per
+  tile, gaps shrinking), winFloor clamped so config can't invert the duck,
+  grain seed varies per burst, duplicate resolver test removed, SPEC module-
+  placement amended (machinery-shared / vocabulary-local). Deferred, disclosed:
+  NaN guards (unreachable), the punch opt-in (no CueIntent field yet),
+  spin-loop being a one-shot (CueIntent can't express loops).
+
+- **SPOKEY PR3 (the synthesized soundscape) built.** Pure law layer
+  (`src/lib/audio/cue-model.ts`: the 120ms startle gate, proximity win-ducking,
+  the LDW law, arousal curve, swarm cap, Shepard window) + the SPOKEY intent
+  table (`cues.ts`, prototype-local, `Record<contract.CueName, CueIntent>` so
+  completeness is compiler-enforced) + the only WebAudio file (`playback.ts`,
+  4 buses, all synthesis, takes `BaseAudioContext`). `sound.ts` became a
+  registry facade — prototypes register intent tables, unregistered names keep
+  the scaffold beeps, so reel-spin-shell and verify.mjs are untouched. The
+  resolver picks base settle cues via `settleCue` (win/ldw/ldw-honest), the
+  scene ignites the bed once per gesture and fires `figure-near` per sighting.
+- **OfflineAudioContext is the audio test harness** (docs/kb/webaudio.md): it is
+  gesture-exempt and deterministic, so browser tests RENDER the synth and assert
+  RMS-window ratios — the ≥120ms attack law and the proximity duck are now
+  proven in samples, not just in the intent table. Seed grain scatter (LCG, not
+  Math.random) to keep renders reproducible.
+- **The kb folder paid for itself same-day:** the PR3 recon facts (gesture
+  exemption, headless contexts start `running`, Shepard/missing-fundamental
+  recipes) went straight into `docs/kb/webaudio.md` instead of only this log —
+  the next audio session starts from a sheet, not a re-search.
+
 - **docs/kb knowledge base added (ADR-0018, Scott's design).** Version-pinned,
   example-heavy markdown crib sheets for the stack (Vite 8/Rolldown, Vitest 4
   browser mode, Biome 2 GritQL, Pixi 8 + GSAP, this container/CI) + per-agent

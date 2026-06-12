@@ -98,14 +98,18 @@ setTimeout scheduling was the scaffold-compatible interim). Darkness is data,
 not shaders (ADR-0011). Proximity is seed-deterministic session state
 (ADR-0012).
 
-**Module placement** (reconciled to the PR1 deviation, LEARNINGS 2026-06-12):
+**Module placement** (reconciled to the PR1 deviation, LEARNINGS 2026-06-12;
+amended at PR3 — the audit flagged this paragraph and ADR-0015 disagreeing):
 SPOKEY-specific pure logic lives in the **prototype dir** — `ways.ts`,
-`visibility.ts`, `resolver.ts` (merged), then `holdwin.ts`, `reveal.ts`,
-`proximity.ts` (PR2) and `cue-model.ts` (PR3) follow the same pattern.
-`src/lib/**` is for genuinely shared, prototype-agnostic code only (ADR-0004) —
-so far just `rng.ts`; PR3's thin WebAudio `playback.ts` graduates only if it
-stays free of SPOKEY types. Every pure module is unit-tested and
-mutation-probed regardless of where it lives.
+`visibility.ts`, `resolver.ts` (merged), `holdwin.ts`, `reveal.ts`,
+`proximity.ts` (PR2), and the **cue→intent table `cues.ts`** (PR3, typed
+against the frozen contract). `src/lib/**` is for genuinely shared,
+prototype-agnostic code only (ADR-0004): `rng.ts`, plus PR3's audio
+**machinery** — `audio/cue-model.ts` (generic laws: attack clamp, LDW rule,
+arousal curve, Shepard window — slot psychology, not SPOKEY lore) and
+`audio/playback.ts` (the only WebAudio file). Both stay free of SPOKEY types;
+the split is machinery-shared / vocabulary-local. Every pure module is
+unit-tested and mutation-probed regardless of where it lives.
 
 ## Tensions surfaced & resolved (the meta-audit's point)
 

@@ -83,6 +83,19 @@ it('the figure-arrival feature triggers, sweeps, and settles on a jackpot', asyn
   host.remove();
 });
 
+it('the bed ignites exactly once — drone-start on the first gesture only (ADR-0015)', async () => {
+  const { app, host, scene } = await mountScene({ reducedMotion: true });
+  scene.spin();
+  await expect.poll(() => scene.isSpinning(), { timeout: 15000, interval: 100 }).toBe(false);
+  scene.spin();
+  await expect.poll(() => scene.isSpinning(), { timeout: 15000, interval: 100 }).toBe(false);
+  const cues = scene.playedCues();
+  expect(cues.filter((c) => c === 'drone-start')).toHaveLength(1);
+  expect(cues.indexOf('drone-start')).toBeLessThan(cues.indexOf('spin-start')); // gesture → bed → spin
+  app.destroy(true);
+  host.remove();
+});
+
 it('a non-jackpot feature settles on win-celebrate (the other settle branch)', async () => {
   const seed = firstNonJackpotSeed();
   const { app, host, scene } = await mountScene({ reducedMotion: true });
