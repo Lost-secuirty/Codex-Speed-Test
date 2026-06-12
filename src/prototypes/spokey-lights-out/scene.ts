@@ -20,7 +20,7 @@ import {
   resolveSpin,
   type SpinParams,
 } from './resolver';
-import { visibleTotal } from './reveal';
+import { shownValue, visibleTotal } from './reveal';
 import { drawCell } from './symbols';
 import { cellLight, type LightSource } from './visibility';
 
@@ -29,9 +29,14 @@ export interface SceneOptions {
   lightsOn?: boolean;
   /** initial seed for the deterministic idle board. */
   seed?: number;
-  /** render a frozen LIGHTS OUT end-state instead of the idle board — the third
-   *  (visible-value) visual baseline (ADR-0013/0017). */
+  /** render a frozen LIGHTS OUT end-state instead of the idle board — the
+   *  visual baseline for the feature (ADR-0013/0017). */
   feature?: boolean;
+  /** override config.flags.hiddenValues — pins both ends of the A/B baseline. */
+  hiddenValues?: boolean;
+  /** how many tiles are revealed in the static feature frame (default: all).
+   *  0 with hiddenValues true is the covered "watch the count" state. */
+  featureRevealed?: number;
   /** override config.flags.reducedMotion (tests speed the feature to settle). */
   reducedMotion?: boolean;
 }
@@ -40,8 +45,8 @@ export interface Scene {
   spin: () => void;
   isSpinning: () => boolean;
   playedCues: () => readonly string[];
-  /** debug/test: arm and play LIGHTS OUT immediately (deterministic). */
-  forceFeature: () => void;
+  /** debug/test: play LIGHTS OUT immediately at an optional explicit seed. */
+  forceFeature: (seed?: number) => void;
   api: ProtoApi;
 }
 
@@ -61,7 +66,7 @@ const spinParams: SpinParams = {
   stepsToArrive: config.feature.stepsToArrive,
 };
 
-const featureParams: FeatureParams = {
+export const featureParams: FeatureParams = {
   reels: B.reels,
   rows: B.rows,
   strip: config.strip,
@@ -93,7 +98,7 @@ export function buildScene(app: Application, opts: SceneOptions = {}): Scene {
   /** figure proximity 0→1; at 1 the next spin fires LIGHTS OUT (ADR-0012). */
   let proximity = 0;
   let featureArmed = false;
-  const hiddenValues = config.flags.hiddenValues;
+  const hiddenValues = opts.hiddenValues ?? config.flags.hiddenValues;
   const motionScale = (opts.reducedMotion ?? config.flags.reducedMotion) ? 6 : 1;
   /** cone position in grid columns (0..reels-1); the searched pocket. */
   let coneCol = 2;
@@ -260,7 +265,7 @@ export function buildScene(app: Application, opts: SceneOptions = {}): Scene {
     const dw = 9;
     const startX = cx - (str.length * dw) / 2;
     for (let i = 0; i < str.length; i++) {
-      drawMiniDigit(g, startX + i * dw, cy, SEG[str[i] ?? '0'] ?? SEG['0']!);
+      drawMiniDigit(g, startX + i * dw, cy, SEG[str[i] ?? '0'] ?? SEG['0'] ?? []);
     }
   }
 
@@ -304,10 +309,17 @@ export function buildScene(app: Application, opts: SceneOptions = {}): Scene {
           const { reel: rr, row: rw } = cellCoord(idx, B.rows);
           const bx = originX + rr * (B.cell + B.reelGap) + B.cell / 2;
           const by = B.originY + rw * pitch + B.cell * 0.56;
-          if (hiddenValues && p >= revealedCount) {
+          // the tested+probed reveal.shownValue owns the cover/show decision
+          // (one source of truth — ADR-0013).
+          const shownVal = shownValue(
+            { index: idx, value: values[p] ?? 0 },
+            p < revealedCount,
+            hiddenValues,
+          );
+          if (shownVal === null) {
             badge.rect(bx - 7, by + 3, 14, 3).fill({ color: meter.dim, alpha: 0.9 }); // covered
           } else {
-            drawValue(badge, bx, by, values[p] ?? 0);
+            drawValue(badge, bx, by, shownVal);
           }
           badgeLayer.addChild(badge);
         }
@@ -336,12 +348,13 @@ export function buildScene(app: Application, opts: SceneOptions = {}): Scene {
 
   // --- the deterministic opening frame ---
   if (opts.feature) {
-    // frozen LIGHTS OUT end-state — every locked cell shown and fully revealed:
-    // the third (visible-value) baseline (ADR-0013/0017).
+    // frozen LIGHTS OUT end-state. revealedCount defaults to all (the visible-
+    // value baseline); 0 with hiddenValues=true is the covered baseline — the
+    // two ends of the A/B (ADR-0013/0017).
     const fo = resolveFeature(seed, featureParams);
     renderFeatureFrame(
       new Set(fo.accumulator.locked),
-      fo.accumulator.locked.length,
+      opts.featureRevealed ?? fo.accumulator.locked.length,
       fo.accumulator.locked,
       fo.accumulator.values,
     );
@@ -362,7 +375,8 @@ export function buildScene(app: Application, opts: SceneOptions = {}): Scene {
     if (spinning) return;
     // the figure has arrived (or scatters triggered) → this spin is LIGHTS OUT.
     if (featureArmed) {
-      playFeature();
+      seed = (seed + 0x9e3779b9) >>> 0;
+      playFeature(seed);
       return;
     }
     spinning = true;
@@ -405,11 +419,10 @@ export function buildScene(app: Application, opts: SceneOptions = {}): Scene {
   /** Play the LIGHTS OUT feature script: collectibles lock in, the flashlight
    *  sweeps the values, then settle (or blackout jackpot). Capped + motion-
    *  scaled so CI settles in budget. */
-  function playFeature(): void {
+  function playFeature(featureSeed: number): void {
     spinning = true;
     featureArmed = false;
-    seed = (seed + 0x9e3779b9) >>> 0;
-    const outcome = resolveFeature(seed, featureParams);
+    const outcome = resolveFeature(featureSeed, featureParams);
     const locked = outcome.accumulator.locked;
     const values = outcome.accumulator.values;
     const shown = new Set<number>();
@@ -458,11 +471,14 @@ export function buildScene(app: Application, opts: SceneOptions = {}): Scene {
     }
   }
 
-  /** Debug/test hook: arm and play the feature immediately (deterministic). */
-  function forceFeature(): void {
+  /** Debug/test hook: play the feature immediately at an explicit seed (so the
+   *  jackpot AND non-jackpot settle branches are both reachable). */
+  function forceFeature(featureSeed?: number): void {
     if (spinning) return;
-    featureArmed = true;
-    spin();
+    featureArmed = false;
+    const s = featureSeed ?? (seed + 0x9e3779b9) >>> 0;
+    seed = s;
+    playFeature(s);
   }
 
   const api: ProtoApi = {

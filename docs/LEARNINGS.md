@@ -7,6 +7,33 @@ evergreen rules into `GOLDEN_RULES.md` via a Scott-reviewed PR.
 
 ## 2026-06-12
 
+- **SPOKEY PR2 presenter audit (auditor subagent, big-diff self-review) — 4
+  seams folded in, 0 high.** The semantic pass on the presenter diff verified the
+  core claims (collectibles-not-entry-symbols, first-spin-always-base confirmed
+  empirically, deterministic settle across 401 seeds, contained CueName drift)
+  and caught four real seams:
+  - **F1 (the important one — vacuous-green, AGAIN, in the presenter layer):**
+    `reveal.shownValue` was unit-tested AND mutation-probed (mutant #24) but had
+    ZERO callers — the presenter reimplemented the cover/show decision inline, so
+    the mutant killed against a function nobody called while the presenter's real
+    branch went unprobed. A probed orphan is vacuous coverage. **Rule: a pure
+    helper is not "the source of truth" until the presenter CALLS it.** Fixed:
+    `scene.ts` now calls `shownValue(...)` for the badge branch.
+  - **F2:** the hidden↔visible A/B was only half-pinned (`?feature=1` captured
+    the fully-revealed end-state only). Added `hiddenValues`/`featureRevealed`
+    scene options + a 4th baseline `spokey-feature-hidden` (covered "watch the
+    count" state, meter 00000) — both ends of the A/B are now visually locked.
+  - **F3:** removed the one `noNonNullAssertion` warning PR2 added (`drawMiniDigit`
+    real fallback).
+  - **F4:** the non-jackpot `win-celebrate` settle branch was dead in CI (the
+    forced seed always jackpots). `forceFeature(seed?)` now takes an explicit
+    seed; a browser test forces a non-jackpot seed and asserts win-celebrate, so
+    both settle branches run. `featureParams` is exported so tests predict seeds.
+  - Two HIGH from the *pure-logic* audit + four from the *presenter* audit, all
+    pre-merge: the two-stage meta-audit (logic before the presenter, then the
+    presenter diff) keeps paying for itself — both rounds found vacuous-green that
+    every green gate hid.
+
 - **SPOKEY PR2 presenter shipped — the feature is playable.** `scene.ts` gained
   the LIGHTS OUT path: the board converts to a collectibles respin grid
   (ADR-0017), value tiles lock in (font-free seven-seg badges), the flashlight
