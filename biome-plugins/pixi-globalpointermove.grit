@@ -1,0 +1,13 @@
+// Pixi v8 footgun (ported from demo-math LEARNINGS 2026-06-11): a plain
+// 'pointermove' listener fires only while the pointer is over the
+// interactive object, so drags die the moment the pointer leaves it.
+// Use 'globalpointermove' instead.
+// SCOPE (known-uncovered, tripwire not wall): addEventListener, event
+// name held in a variable.
+`$target.on($event, $handler)` where {
+  $event <: or {
+    `'pointermove'`,
+    `"pointermove"`
+  },
+  register_diagnostic(span=$event, message="Pixi v8: plain 'pointermove' fires only over the interactive object — use 'globalpointermove' for drags (LEARNINGS 2026-06-12).")
+}

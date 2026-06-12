@@ -1,0 +1,9 @@
+// Pixi v8 footgun (ported from demo-math LEARNINGS 2026-06-01):
+// generateTexture with a plain-object frame silently misbehaves in v8 —
+// the frame must be a real `new Rectangle(...)`.
+// SCOPE (known-uncovered): frame built in a variable beforehand.
+`$target.generateTexture($options)` where {
+  $options <: contains `frame: $value`,
+  $value <: `{ $fields }`,
+  register_diagnostic(span=$value, message="Pixi v8: generateTexture frame must be `new Rectangle(...)`, not a plain object (LEARNINGS 2026-06-12).")
+}
