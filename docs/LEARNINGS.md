@@ -7,6 +7,13 @@ evergreen rules into `GOLDEN_RULES.md` via a Scott-reviewed PR.
 
 ## 2026-06-12
 
+- **Two silent-failure seams closed after Scott's review (fold-in):**
+  (1) `audit-drift.mjs` now refuses to run on an unresolvable base/head ref
+  (exit 2) — previously a bad ref produced an empty diff and a vacuous
+  "no drift detected ✅"; (2) `mutation-probe.mjs` now FAILS on any skipped
+  mutant — previously moved target strings silently shrank the probe's
+  teeth while the score stayed green. Both were disclosed as residual
+  seams during the silent-failure review; gates only strengthen (WA #6).
 - **The anti-runaway loop ran away (caught live on PR #1, human-throttled).**
   Demo-math's audit design assumes GITHUB_TOKEN pushes create NO workflow
   runs. In this environment they create **approval-held** runs

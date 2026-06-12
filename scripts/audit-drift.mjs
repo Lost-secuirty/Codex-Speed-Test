@@ -55,6 +55,19 @@ const add = (id, severity, confidence, title, detail, evidence = []) =>
   findings.push({ id, severity, confidence, title, detail, evidence });
 
 // ---- resolve the commit range -------------------------------------------
+// Refuse to audit an unresolvable range: sh() swallows git errors, so a bad
+// ref would yield an empty diff and a vacuous "no drift detected ✅" — the
+// textbook silent failure (caught in the PR #1 review; LEARNINGS 2026-06-12).
+function ensureRef(ref) {
+  if (!sh(`git rev-parse --verify --quiet ${ref}^{commit}`).trim()) {
+    console.error(
+      `audit: cannot resolve ref '${ref}' — refusing to report on an empty range. Fetch it (git fetch origin main) or pass a valid --base/--head.`,
+    );
+    process.exit(2);
+  }
+}
+ensureRef(opt.base);
+ensureRef(opt.head);
 const mergeBase = sh(`git merge-base ${opt.base} ${opt.head}`).trim() || opt.base;
 const range = `${mergeBase}..${opt.head}`;
 

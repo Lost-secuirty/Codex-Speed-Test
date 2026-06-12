@@ -183,7 +183,12 @@ function run() {
     process.exit(1);
   }
   if (skipped) {
-    console.log('\nNOTE: skipped mutants mean a target string moved — repoint them (drift!).');
+    // A skipped mutant means its target string moved — left silent, the
+    // probe decays toward all-SKIPPED while staying green (silent failure,
+    // caught in the PR #1 review; LEARNINGS 2026-06-12). Repointing the
+    // find strings is part of the refactor that moved them.
+    console.log('\nFAIL: skipped mutants — the targets moved; repoint the find strings (drift).');
+    process.exit(1);
   }
 }
 
