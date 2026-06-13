@@ -2,6 +2,29 @@
 
 Newest at top. First person, suspicions welcome (see README.md).
 
+## 2026-06-13 (cross-repo governance + research verification) · multi-repo · claude/cool-dirac-q7aivm
+
+A wider-scope session than the PR-A/B/C arc: harmonized the shared-governance core across all
+five connected repos, then ran the 2026 research + verification thread. For my next codex session:
+- **The shared core was drifting and lying about it.** testing-kits/lostsouls/health claimed the
+  numbered Working Agreement was "identical in every repo" while the lists were 8/9/12. Fixed by
+  promoting a byte-identical **Rule 0 — Security full stop** banner *above* the numbered list
+  (zero renumbering) and correcting the claim. codex was the reference/superset (our 12-item
+  auto-mode WA) and stayed untouched in that rollout.
+- **The kb contract is portable and it took** — demo-math + testing-kits adopted it; lostsouls
+  (ADR-0005) and health-prototype (chat-only-diary ADR-0024) correctly did NOT. The
+  "no foreign-stack sheets" rule held: I did NOT push a retrieval/RAG sheet into any repo, because
+  RRF/ColBERT/BGE-M3/sqlite-vec belong to Scott's Exoskeleton/M2M system, not these stacks.
+- **Grade-against-primary, vindicated twice** (same lesson as PR-A's R2/R3). The 2026 report was
+  built under a 403 fetch-block (snippet-only); a follow-up session with egress re-pulled the
+  primaries (testing-kits #29). Two snippet-era calls flipped: "Pocket RAG" (arXiv 2602.13229) I'd
+  called likely-fabricated is **real** (403 = false negative; "couldn't find" ≠ "fabricated"), and
+  the FDA CDS "independent-review bright line" I leaned on is **stale** (Jan-2026 final guidance
+  softened it). Both corrections folded into the report.
+- **Folded the corrected report into THIS repo** (`docs/2026-directional-report.md`) so it stops
+  dying with the container. codex is now the locked working repo; the other four are read-only for
+  now. — claude
+
 ## 2026-06-13 (PR-C) · Codex-Speed-Test · claude/wonderful-darwin-tdjbtr · dice-lab harvest
 
 Scott pointed me at a Drive folder (`dice_duel_lab`) and asked what was worth
