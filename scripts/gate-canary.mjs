@@ -213,12 +213,66 @@ function canaryScanner() {
 }
 
 // ---------------------------------------------------------------------
+// 6. file guard — must BITE when a protected file is tampered. Stage the
+//    real safety machinery into a temp root, baseline it, confirm a clean
+//    check passes, then flip one byte and confirm the guard fails. Runs the
+//    REAL scripts/file-guard.mjs against the copy (--root), so a guard gone
+//    soft can't hide behind a private fixture.
+// ---------------------------------------------------------------------
+function canaryGuard() {
+  const dir = mkdtempSync(join(tmpdir(), 'cst-canary-guard-'));
+  try {
+    // Containers of every protected path (whole dirs catch new members for
+    // free; only a brand-new ROOT-level protected file would need adding).
+    const stage = [
+      'scripts',
+      'biome-plugins',
+      'tools',
+      '.githooks',
+      'biome.json',
+      'vite.config.ts',
+      'vitest.config.ts',
+      'tsconfig.json',
+      'tsconfig.node.json',
+      'verify.mjs',
+    ];
+    for (const p of stage) cpSync(join(REPO, p), join(dir, p), { recursive: true });
+    const guard = (...extra) =>
+      spawnSync(
+        process.execPath,
+        [
+          join(REPO, 'scripts', 'file-guard.mjs'),
+          '--root',
+          dir,
+          '--manifest',
+          join(dir, '.fileguard.json'),
+          ...extra,
+        ],
+        { cwd: dir, encoding: 'utf8' },
+      );
+    record('guard: baseline writes over the protected set', guard('--update').status === 0);
+    record('guard: clean check passes on an untouched tree', guard().status === 0);
+    const victim = join(dir, 'scripts', 'preflight.mjs');
+    writeFileSync(victim, `${readFileSync(victim, 'utf8')}\n// canary tamper\n`);
+    const tampered = guard();
+    record(
+      'guard: BITES when a protected file is tampered',
+      tampered.status === 1,
+      `exit ${tampered.status}`,
+    );
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+}
+
+// ---------------------------------------------------------------------
 console.log('GATE CANARY — proving every gate still fails on known-bad input\n');
 canaryLint();
 canaryTypecheck();
 canaryVisual();
 canaryAudit();
 canaryScanner();
+canaryGuard();
 
 const failed = results.filter((r) => !r.pass);
 console.log(`\n--- SUMMARY: ${results.length - failed.length}/${results.length} canaries pass ---`);

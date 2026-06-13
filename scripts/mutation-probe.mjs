@@ -284,6 +284,47 @@ const MUTATIONS = [
   },
 ];
 
+// Provenance — the dice-lab "every survivor gets a NAMED regression test"
+// discipline, made executable (ADR-0021). Each mutant must name the unit
+// suite meant to kill it; the killer is the target module's unit test. A
+// mutant whose target module has no registered suite — or whose suite has
+// gone missing — is a blind spot waiting to happen, so it fails LOUD here
+// rather than riding as quiet green. New module ⇒ register its test below
+// (or set a per-mutant `kills` override) ⇒ you are forced to point at a test.
+const FILE_TO_TEST = {
+  'src/lib/reels/reel-math.ts': 'test/unit/reel-math.test.ts',
+  'src/lib/storage.ts': 'test/unit/storage.test.ts',
+  'src/lib/rng.ts': 'test/unit/rng.test.ts',
+  'src/lib/audio/cue-model.ts': 'test/unit/audio-cue-model.test.ts',
+  'src/prototypes/spokey-lights-out/ways.ts': 'test/unit/spokey-ways.test.ts',
+  'src/prototypes/spokey-lights-out/visibility.ts': 'test/unit/spokey-visibility.test.ts',
+  'src/prototypes/spokey-lights-out/resolver.ts': 'test/unit/spokey-resolver.test.ts',
+  'src/prototypes/spokey-lights-out/holdwin.ts': 'test/unit/spokey-holdwin.test.ts',
+  'src/prototypes/spokey-lights-out/proximity.ts': 'test/unit/spokey-proximity.test.ts',
+  'src/prototypes/spokey-lights-out/reveal.ts': 'test/unit/spokey-reveal.test.ts',
+  'src/prototypes/spokey-lights-out/cues.ts': 'test/unit/spokey-cues.test.ts',
+};
+const killerTest = (m) => m.kills || FILE_TO_TEST[m.file];
+
+// Fail loud BEFORE any temp work if provenance is missing or a lie.
+const provenanceless = MUTATIONS.filter((m) => {
+  const k = killerTest(m);
+  return !k || !existsSync(join(REPO, k));
+});
+if (provenanceless.length) {
+  console.error(
+    'MUTATION PROBE: mutants with no (or a missing) killing test — provenance broken (ADR-0021):',
+  );
+  for (const m of provenanceless) {
+    const k = killerTest(m);
+    console.error(`- ${m.name}  [${m.file}]  → ${k ? `${k} (not found)` : 'no test registered'}`);
+  }
+  console.error(
+    '\nRegister the target module in FILE_TO_TEST (or set a per-mutant `kills`) pointing at a real suite.',
+  );
+  process.exit(1);
+}
+
 function makeTemp() {
   const dir = mkdtempSync(join(tmpdir(), 'cst-mut-'));
   for (const item of COPY) cpSync(join(REPO, item), join(dir, item), { recursive: true });
@@ -356,7 +397,7 @@ function run() {
         console.log(`${String(i + 1).padStart(2)}. KILLED   | ${m.name}`);
       } else {
         survived++;
-        survivors.push(m.name);
+        survivors.push({ name: m.name, kills: killerTest(m) });
         console.log(`${String(i + 1).padStart(2)}. SURVIVED | ${m.name}`);
       }
     } finally {
@@ -371,8 +412,10 @@ function run() {
   );
   console.log(`Mutation score: ${executable ? ((killed / executable) * 100).toFixed(1) : 'n/a'}%`);
   if (survivors.length) {
-    console.log('\nSURVIVED (test blind spots — add a test):');
-    for (const s of survivors) console.log(`- ${s}`);
+    console.log(
+      '\nSURVIVED (test blind spots — strengthen the NAMED suite until it kills the mutant):',
+    );
+    for (const s of survivors) console.log(`- ${s.name}\n    → ${s.kills}`);
     process.exit(1);
   }
   if (skipped) {

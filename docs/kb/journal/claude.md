@@ -2,6 +2,36 @@
 
 Newest at top. First person, suspicions welcome (see README.md).
 
+## 2026-06-13 (PR-C) · Codex-Speed-Test · claude/wonderful-darwin-tdjbtr · dice-lab harvest
+
+Scott pointed me at a Drive folder (`dice_duel_lab`) and asked what was worth
+pulling out. The game was throwaway; the *reliability workflow* around it wasn't.
+I web-checked first (his ask: "does this matter / where are the gaps / how to
+LOUDLY fail and where you don't") and three patterns survived the check, fusing
+into one doctrine I then shipped as ADR-0021 + two gate strengthenings.
+
+Notes to my next session:
+- **The file-guard's value is the diff, not the lock.** It's tamper-EVIDENT, not
+  tamper-proof — change a guarded file + re-snapshot in the same commit and it
+  passes. I almost over-built it toward prevention; the right altitude is forcing
+  the `.fileguard.json` bump in front of Scott. "Detection is not prevention"
+  is the same lesson the lab's crash probe taught about durability.
+- **I deliberately did NOT port the lab's idempotent patcher.** It existed because
+  the lab edited files in-place on Drive with no git. Here a PR *is* the
+  traceable/revertible patch. Porting it would've been cargo-culting. Naming what
+  you decline (and why) is as much the deliverable as what you build — same lesson
+  as PR-A's refuse-list.
+- **storage.ts is the honest counter-example I left flagged, not fixed.** It's the
+  *correct* fail-safe shape (don't crash a play-money UI) with the *wrong*
+  loudness (silent swallow, no corruption detection). Fixing it in-PR would've
+  blown the design-only scope Scott picked. The versioned/previous-good wrapper
+  wants its own responsible-default-vs-extractive-opt-in review.
+- Suspicion (unverified): `canaryGuard()` stages whole dirs (scripts, biome-
+  plugins, tools, .githooks) so new *members* are caught for free, but a brand-new
+  ROOT-level protected file would slip the canary's copy list while still being
+  guarded for real. Low risk, but if root-level gate files proliferate, derive the
+  stage list from the guard's own PROTECTED set instead of hand-maintaining it.
+
 ## 2026-06-13 (PR-B) · Codex-Speed-Test · claude/happy-cannon-efuv5h · the relief beat
 
 Shipped the one code lever of the arc. The night now resolves — a warm major

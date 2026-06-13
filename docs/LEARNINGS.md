@@ -7,6 +7,33 @@ evergreen rules into `GOLDEN_RULES.md` via a Scott-reviewed PR.
 
 ## 2026-06-13
 
+- **Dice-lab harvest → `file-guard` + mutation provenance (ADR-0021).** Mined a
+  Drive "dice-duel reliability lab" for reusable patterns. Three landed as one
+  doctrine — *fail loud at the gates, fail safe-but-observable at runtime*:
+  - **`scripts/file-guard.mjs` (`npm run guard`)** — sha256 freeze over the
+    EXECUTABLE safety machinery (audit/probe/canary/preflight scripts, the
+    `biome-plugins/*.grit` footguns, `tools/scan_staged.py`, `.githooks/pre-commit`,
+    build/test configs, itself). Hard, working-tree, content-addressed tripwire;
+    fails preflight on any byte change until `.fileguard.json` is re-snapshotted —
+    the bump then shows in the diff. It's the loud complement to audit-drift's
+    MEDIUM, ref-relative `sensitive-paths` nag (which goes vacuous on a bad base
+    ref; the guard doesn't). Tamper-EVIDENT, not -proof (change + re-snapshot in
+    one commit passes → the point is human review of the pair). Wired into
+    preflight after the canary, and proven to bite by a new `canaryGuard()` case
+    (a guard with no canary is the vacuous-green trap this repo obsesses over).
+  - **Mutation provenance** — `mutation-probe.mjs` now REQUIRES each mutant to
+    name the suite that kills it (`FILE_TO_TEST`, existence-checked) and prints it
+    on SURVIVED. A new module with no registered suite fails the probe loud.
+  - **storage.ts flagged, not fixed (ADR-0021 follow-up).** It degrades correctly
+    (fallback on miss/corrupt/quota/private-mode) but SILENTLY — three empty
+    catches, corruption indistinguishable from a missing key, no detection. A
+    future PR adds dev-mode observability + an opt-in versioned/previous-good
+    wrapper for load-bearing keys. Design-only this round, by scope.
+  - **Not ported:** the lab's in-place idempotent test-patcher — git already gives
+    traceable/revertible/reviewable test additions; importing it would re-solve a
+    solved problem. Kept the essence (survivor ⇒ named committed test), dropped
+    the mechanism.
+
 - **Gate-strengthening follow-up (the PR-B audit's latent item) — shipped.** Added
   an exhaustiveness `default` to `playback.ts`'s `switch (intent.kind)`: a future
   `SynthKind` added without a case is now a COMPILE error, not a silently-silent
