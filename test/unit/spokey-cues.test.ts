@@ -10,8 +10,8 @@ import { SPOKEY_CUES } from '../../src/prototypes/spokey-lights-out/cues';
 const ALL_CUES = Object.keys(SPOKEY_CUES) as CueName[];
 
 describe('SPOKEY_CUES design laws', () => {
-  it('covers the full frozen cue vocabulary (13 cues)', () => {
-    expect(ALL_CUES).toHaveLength(13);
+  it('covers the full frozen cue vocabulary (14 cues)', () => {
+    expect(ALL_CUES).toHaveLength(14);
   });
 
   it('every RAW attack value is ≥120ms — unease, never jump-scare', () => {
@@ -46,6 +46,14 @@ describe('SPOKEY_CUES design laws', () => {
   it('the figure rises on the stingers bus as a shepard layer', () => {
     expect(SPOKEY_CUES['figure-near'].bus).toBe('stingers');
     expect(SPOKEY_CUES['figure-near'].kind).toBe('shepard');
+  });
+
+  it('relief is a consonant RESOLUTION (ADR-0020), not an escalation', () => {
+    // the relief beat lands the endless rise — it must resolve, never cut-swell.
+    expect(SPOKEY_CUES.relief.kind).toBe('resolve');
+    expect(SPOKEY_CUES.relief.bus).toBe('stingers'); // resolves the figure's arc
+    expect(SPOKEY_CUES.relief.attackMs).toBeGreaterThanOrEqual(MIN_ATTACK_MS); // relief, not startle
+    expect(SPOKEY_CUES.relief.sustain ?? false).toBe(false); // it ends; only the bed sustains
   });
 
   it('the honest LDW is a DIFFERENT sound (descend), not a quieter celebration', () => {

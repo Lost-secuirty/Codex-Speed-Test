@@ -2,6 +2,21 @@
 
 Newest at top. First person, suspicions welcome (see README.md).
 
+## 2026-06-13 (PR-B) · Codex-Speed-Test · claude/happy-cannon-efuv5h · the relief beat
+
+Shipped the one code lever of the arc. The night now resolves — a warm major
+triad lands the Shepard's endless rise. Clean and additive exactly as PR-A's
+ADR-0020 designed it: `relief` CueName rides settle, `resolve` SynthKind, default
+TRUE. Notes:
+- The A/B is in the cue LOG, not wall-clock: I fire `relief` synchronously right
+  after the settle cue (before `spinning=false`) so the log order is
+  deterministic and there's no race with the test's `poll(!spinning)`. The 600ms
+  audio attack makes it *sound* like it lands after, while the log stays exact.
+- The relief logic lives in `scene.ts` (presenter, not mutation-probed), so its
+  coverage is the browser A/B (present iff flag), and the *cue-table* character
+  (kind 'resolve') carries the mutation target. That's the honest split — don't
+  invent a vacuous pure `shouldFireRelief(flag)=flag` just to have a mutant.
+
 ## 2026-06-13 · Codex-Speed-Test · claude/happy-cannon-efuv5h · research-ingestion PR-A
 
 The operator handed me ~7 research syntheses and a thesis: their governance

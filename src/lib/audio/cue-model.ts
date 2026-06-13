@@ -24,7 +24,8 @@ export type SynthKind =
   | 'shepard' // endless-rise layer step (figure proximity)
   | 'grain' // granular skitter burst (the swarm)
   | 'cut-swell' // silence-then-swell (feature trigger / jackpot — escalate by subtraction)
-  | 'noise-tick'; // filtered noise transient (spin loop start)
+  | 'noise-tick' // filtered noise transient (spin loop start)
+  | 'resolve'; // consonant major-triad settle — the relief/resolution (ADR-0020)
 
 /** One cue's synthesis intent — everything playback needs, nothing it decides. */
 export interface CueIntent {

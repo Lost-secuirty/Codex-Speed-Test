@@ -7,6 +7,32 @@ evergreen rules into `GOLDEN_RULES.md` via a Scott-reviewed PR.
 
 ## 2026-06-13
 
+- **Research-ingestion arc, PR-B (the relief beat) — the one lever, shipped.**
+  The excitation-transfer payoff (ADR-0020): the feature now ends on a `relief`
+  cue — a warm consonant major-triad `resolve` synth that lands the endless rise
+  and lets the player put it down. Additive only: `relief` is a new `CueName`
+  riding the settle phase (no PhaseKind change), `resolve` a new `SynthKind`.
+  `reliefResolves` defaults TRUE (responsible — completes the catharsis); FALSE
+  withholds it (trapped arousal, the extractive A/B). Both paths are pinned in
+  the browser cue-ordering tests (relief terminal when true, absent when false);
+  a relief-specific OfflineAudioContext probe proves the slow non-startle onset;
+  a cues.ts mutant (relief → cut-swell) is killed by the new design-law test.
+  118 unit · 37/37 mutation · 16 browser · all green. The honest default leading
+  the extractive opt-in (inverting ADR-0014's pattern) is the nice part — here
+  the responsible choice is also the better craft, so it leads.
+- **PR-B pre-push meta-audit: PASS, 0 high.** Verified the A/B is *not* vacuous —
+  both flag paths are pinned by browser cue-order tests (relief terminal iff
+  `reliefResolves`), the relief→cut-swell mutant is killed by the unit design-law
+  (re-ran 37/37), the OfflineAudioContext probe rejects both silence and a
+  jump-in onset, and the scene-level flag is honestly documented as browser-
+  covered (not mutant-covered — no invented vacuous pure helper). **Latent
+  follow-up (logged, not folded in per the auditor + ADR-0007):** `playback.ts`'s
+  `switch (intent.kind)` has no `default`/`assertNever`, so a *future* SynthKind
+  added without a case would render silent with no compile/test error — a
+  one-line `assertNever` guard is a worthwhile separate gate-strengthening PR
+  (WA #6, gates only strengthen). Not a PR-B defect (the `resolve` case exists
+  and the render probe proves it audible).
+
 - **Research-ingestion arc, PR-A (capture + govern) — the governance leads the
   code, by design.** Folded the operator's 7 research syntheses into graded
   evidence + responsible-design artifacts (no code this PR). EVIDENCE.md gained a

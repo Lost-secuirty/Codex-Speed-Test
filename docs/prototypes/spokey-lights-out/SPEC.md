@@ -88,9 +88,18 @@ The trigger escalates by **subtraction** (cut the bed to silence, then swell).
 Universal **≥120ms attack** (100ms floor only if dull) = "unease, never
 jump-scare." The bright fanfare is cut.
 
+**The resolved ending (ADR-0020).** The feature ends on a **relief** cue — a
+warm consonant triad that lands the endless rise and lets the player put it
+*down* (excitation-transfer: residual fear-arousal transfers to the relief).
+`reliefResolves` defaults TRUE (the responsible default — completes the
+catharsis); `false` withholds it (trapped arousal — the extractive A/B, per the
+RESPONSIBLE-DESIGN.md matrix). This is the design's built-in counter to the
+Machine Zone (horror keeps the player present, then releases them).
+
 Cue vocabulary (the `verify.mjs` ordering contract): `drone-start`, `spin-loop`,
 `reel-stop`, `near-miss`, `rollup`, `win-celebrate`, `ldw` / `ldw-honest`,
-`figure-near`, `swarm-tick`, `feature-trigger`, `lights-out-tick`, `jackpot`.
+`figure-near`, `swarm-tick`, `feature-trigger`, `lights-out-tick`, `jackpot`,
+`relief`.
 
 ## Config flags (all in the prototype's `config.ts`)
 

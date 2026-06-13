@@ -43,6 +43,8 @@ export interface SceneOptions {
   featureRevealed?: number;
   /** override config.flags.reducedMotion (tests speed the feature to settle). */
   reducedMotion?: boolean;
+  /** override config.audio.reliefResolves — the resolved-vs-withheld A/B (ADR-0020). */
+  reliefResolves?: boolean;
 }
 
 export interface Scene {
@@ -111,6 +113,7 @@ export function buildScene(app: Application, opts: SceneOptions = {}): Scene {
   let featureArmed = false;
   let droneStarted = false;
   const hiddenValues = opts.hiddenValues ?? config.flags.hiddenValues;
+  const reliefResolves = opts.reliefResolves ?? config.audio.reliefResolves;
   const motionScale = (opts.reducedMotion ?? config.flags.reducedMotion) ? 6 : 1;
   /** cone position in grid columns (0..reels-1); the searched pocket. */
   let coneCol = 2;
@@ -505,6 +508,10 @@ export function buildScene(app: Application, opts: SceneOptions = {}): Scene {
           // resolveFeature's settle cue is only ever jackpot or win-celebrate.
           logCue(phase.cue ?? 'win-celebrate');
           setBusLevel('bed', arousalLevel('idle'));
+          // excitation-transfer: resolve the night so the player can put it down
+          // (ADR-0020). reliefResolves=false withholds it — trapped arousal, the
+          // extractive A/B. The 600ms-attack relief cue swells in under the win.
+          if (reliefResolves) logCue('relief');
           proximity = 0; // the night resets after the figure passes
           spinning = false;
         }, at);
