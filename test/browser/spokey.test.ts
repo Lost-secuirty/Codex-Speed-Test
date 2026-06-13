@@ -78,7 +78,11 @@ it('the figure-arrival feature triggers, sweeps, and settles on a jackpot', asyn
   const cues = scene.playedCues();
   expect(cues).toContain('feature-trigger');
   expect(cues.indexOf('feature-trigger')).toBeLessThan(cues.indexOf('rollup')); // sweep after trigger
-  expect(cues.at(-1)).toBe('jackpot');
+  // reliefResolves defaults TRUE: the night resolves — relief is the terminal
+  // cue, landing after the jackpot (ADR-0020).
+  expect(cues).toContain('jackpot');
+  expect(cues.indexOf('jackpot')).toBeLessThan(cues.indexOf('relief'));
+  expect(cues.at(-1)).toBe('relief');
   app.destroy(true);
   host.remove();
 });
@@ -101,7 +105,22 @@ it('a non-jackpot feature settles on win-celebrate (the other settle branch)', a
   const { app, host, scene } = await mountScene({ reducedMotion: true });
   scene.forceFeature(seed);
   await expect.poll(() => scene.isSpinning(), { timeout: 15000, interval: 100 }).toBe(false);
-  expect(scene.playedCues().at(-1)).toBe('win-celebrate');
+  const cues = scene.playedCues();
+  expect(cues).toContain('win-celebrate');
+  expect(cues.indexOf('win-celebrate')).toBeLessThan(cues.indexOf('relief'));
+  expect(cues.at(-1)).toBe('relief'); // resolves regardless of jackpot vs win
+  app.destroy(true);
+  host.remove();
+});
+
+it('reliefResolves:false WITHHOLDS the resolution — trapped arousal (the A/B)', async () => {
+  // the extractive variant: no relief cue; the settle cue is terminal.
+  const { app, host, scene } = await mountScene({ reducedMotion: true, reliefResolves: false });
+  scene.forceFeature(); // seed-7 jackpot
+  await expect.poll(() => scene.isSpinning(), { timeout: 15000, interval: 100 }).toBe(false);
+  const cues = scene.playedCues();
+  expect(cues).not.toContain('relief');
+  expect(cues.at(-1)).toBe('jackpot'); // ends unresolved
   app.destroy(true);
   host.remove();
 });

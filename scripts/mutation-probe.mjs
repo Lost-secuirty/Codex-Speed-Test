@@ -271,6 +271,12 @@ const MUTATIONS = [
     replace: "kind: 'arp',\n    freq: 66,",
   },
   {
+    name: 'spokey cues: relief escalates instead of resolving (cut-swell, not resolve)',
+    file: 'src/prototypes/spokey-lights-out/cues.ts',
+    find: "kind: 'resolve',\n    freq: 196,",
+    replace: "kind: 'cut-swell',\n    freq: 196,",
+  },
+  {
     name: 'spokey resolver: LDW params ignored at settle',
     file: 'src/prototypes/spokey-lights-out/resolver.ts',
     find: 'cue: settleCue(total, p.ldwThreshold ?? 0, p.ldwHonest ?? false),',

@@ -28,6 +28,18 @@ describe('playback in OfflineAudioContext', () => {
     expect(rms(buf.getChannelData(0), sr, 0, 2)).toBeGreaterThan(0.0005); // not silence
   });
 
+  it('the relief cue resolves audibly with a slow (non-startle) onset (ADR-0020)', async () => {
+    const sr = 44100;
+    const ctx = new OfflineAudioContext(1, sr * 3, sr);
+    createPlayback(ctx).play(SPOKEY_CUES.relief);
+    const buf = await ctx.startRendering();
+    const data = buf.getChannelData(0);
+    const start = rms(data, sr, 0, 0.02); // first 20ms: near-silent under a 600ms attack
+    const peak = rms(data, sr, 0.6, 1.2); // after the attack completes
+    expect(peak).toBeGreaterThan(0.001); // the resolution is audible
+    expect(start).toBeLessThan(peak * 0.2); // slow swell, not a jump-in
+  });
+
   it('the ≥120ms attack law holds in the rendered samples (startle gate)', async () => {
     const sr = 44100;
     const ctx = new OfflineAudioContext(1, sr, sr);

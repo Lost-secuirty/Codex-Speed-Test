@@ -62,4 +62,5 @@ export type CueName =
   | 'swarm-tick' // one granular skitter grain
   | 'feature-trigger'
   | 'lights-out-tick' // one held tile captured during the feature
-  | 'jackpot'; // full-board blackout
+  | 'jackpot' // full-board blackout
+  | 'relief'; // the night resolves — excitation-transfer payoff (ADR-0020); `reliefResolves`

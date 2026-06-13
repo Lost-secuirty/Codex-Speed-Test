@@ -99,4 +99,14 @@ export const SPOKEY_CUES: Record<CueName, CueIntent> = {
     durationMs: 3600,
     gain: 0.85,
   },
+  // the resolution: a warm consonant triad that lands the endless rise and ends
+  // the night (ADR-0020). Slow attack — relief, never a startle.
+  relief: {
+    bus: 'stingers',
+    kind: 'resolve',
+    freq: 196,
+    attackMs: 600,
+    durationMs: 2400,
+    gain: 0.55,
+  },
 };

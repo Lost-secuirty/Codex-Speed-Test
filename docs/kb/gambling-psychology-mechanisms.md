@@ -23,7 +23,7 @@ counter. A mechanism is fine to *model* (study) and a red line to *exploit*
 | Loss-disguised-as-win (sound re-codes a loss) | VERIFIED | `cue-model.ts settleCue`; `ldwHonest` flag | `ldwHonest: true` (unmask) | wired (toggle) |
 | Anticipatory dopamine peaks at max uncertainty (Fiorillo) | VERIFIED | `hiddenValues` (hidden held values) | `hiddenValues: false` (shown) | wired (toggle) |
 | Illusion of control (stop button) | VERIFIED | `stopButton` — **diegetic only** | never wired to outcome | wired (legible, inert) |
-| Excitation-transfer: resolved ending amplifies relief | VERIFIED | relief beat (`reliefResolves`, PR-B) | `reliefResolves: false` (withheld) | planned PR-B (honest default) |
+| Excitation-transfer: resolved ending amplifies relief | VERIFIED | relief beat — `cues.ts relief`, `scene.ts` settle, `reliefResolves` | `reliefResolves: false` (withheld) | wired (honest default) |
 | ≥120ms attack = unease not jump-scare (rise-time startle gate) | VERIFIED | `cue-model.clampAttack`; law, all cues | n/a (a floor, not a lever) | wired (law) |
 | Punishment insensitivity = contingency-detection failure | VERIFIED | — (informs the doctrine/refuse-list) | n/a | documented |
 | The Machine Zone (dissociative trance) | VERIFIED | — | n/a | **declined** (#1) |

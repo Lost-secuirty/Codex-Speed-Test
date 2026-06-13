@@ -308,6 +308,16 @@ export function createPlayback(ctx: BaseAudioContext): Playback {
         noiseBurst(bus, t0, intent.attackMs, intent.durationMs, gain, intent.freq);
         break;
       }
+      case 'resolve': {
+        // consonant resolution — a warm major triad (root, M3, P5) + a low root
+        // octave below, swelling and settling. The opposite of the cold minor
+        // arp / cut-swell: the night ends (ADR-0020).
+        for (const r of [1, 1.25, 1.5]) {
+          osc('sine', intent.freq * r, bus, t0, intent.attackMs, intent.durationMs, gain * 0.4);
+        }
+        osc('triangle', intent.freq * 0.5, bus, t0, intent.attackMs, intent.durationMs, gain * 0.3);
+        break;
+      }
     }
   }
 

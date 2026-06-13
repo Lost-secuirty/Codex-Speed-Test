@@ -54,7 +54,10 @@ export const config = {
   // synthesized soundscape (ADR-0015, PR3). ldwThreshold: a base-game "win"
   // below this is a loss-disguised-as-win (ADR-0014); winFloor: how far the
   // win juice ducks as the figure arrives (proximity 1 → this gain).
-  audio: { ldwThreshold: 10, winFloor: 0.35 },
+  // reliefResolves (ADR-0020): TRUE = the feature ends on a resolved relief cue
+  // (the responsible default — completes the catharsis, lets the player put it
+  // down); FALSE = withhold resolution (trapped arousal, the extractive A/B).
+  audio: { ldwThreshold: 10, winFloor: 0.35, reliefResolves: true },
   flags: {
     nearMiss: true,
     stopButton: true,
