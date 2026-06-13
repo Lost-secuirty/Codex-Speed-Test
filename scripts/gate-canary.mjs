@@ -19,7 +19,8 @@
 //
 // Covered:   lint core rule, all 3 GritQL footgun plugins, typecheck,
 //            visual comparator thresholds (the dark-drift probe),
-//            drift-audit bad-ref refusal, secret-scanner self-test.
+//            drift-audit bad-ref refusal, secret-scanner self-test,
+//            file-guard (modified/removed/unbaselined), determinism gate.
 // Self-canarying elsewhere (not duplicated here): the mutation probe
 //            fails on survivors AND on skipped mutants; every KILLED
 //            mutant already proves the unit gate detects failure.
@@ -275,6 +276,57 @@ function canaryGuard() {
 }
 
 // ---------------------------------------------------------------------
+// 7. determinism — the gate must BITE on a non-hermetic test. Stage a temp
+//    root (real vitest config + symlinked node_modules) with planted unit
+//    tests and run the REAL scripts/determinism.mjs against it: clean passes,
+//    a clock-dependent test (flips between the gate's UTC and Asia/Kolkata
+//    runs) makes it fail.
+// ---------------------------------------------------------------------
+function canaryDeterminism() {
+  const HERMETIC =
+    "import { describe, it, expect } from 'vitest';\n" +
+    "describe('hermetic', () => { it('is stable', () => { expect(1 + 1).toBe(2); }); });\n";
+  // Reads wall-clock TZ: passes under the gate's run-1 (TZ=UTC, offset 0),
+  // fails under run-2 (TZ=Asia/Kolkata, offset -330) — a guaranteed flip.
+  const NONHERMETIC =
+    "import { describe, it, expect } from 'vitest';\n" +
+    "describe('clock-dependent', () => { it('reads the local timezone', () => { expect(new Date().getTimezoneOffset()).toBe(0); }); });\n";
+
+  const stageAndRun = (files) => {
+    const dir = mkdtempSync(join(tmpdir(), 'cst-canary-determ-'));
+    try {
+      cpSync(join(REPO, 'vitest.config.ts'), join(dir, 'vitest.config.ts'));
+      cpSync(join(REPO, 'package.json'), join(dir, 'package.json'));
+      symlinkSync(
+        join(REPO, 'node_modules'),
+        join(dir, 'node_modules'),
+        process.platform === 'win32' ? 'junction' : 'dir',
+      );
+      mkdirSync(join(dir, 'test', 'unit'), { recursive: true });
+      for (const [name, src] of Object.entries(files)) {
+        writeFileSync(join(dir, 'test', 'unit', name), src);
+      }
+      return spawnSync(
+        process.execPath,
+        [join(REPO, 'scripts', 'determinism.mjs'), '--root', dir],
+        {
+          cwd: dir,
+          encoding: 'utf8',
+        },
+      ).status;
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  };
+
+  record('determinism: clean hermetic suite passes', stageAndRun({ 'a.test.ts': HERMETIC }) === 0);
+  record(
+    'determinism: BITES on a clock-dependent test',
+    stageAndRun({ 'a.test.ts': HERMETIC, 'b.test.ts': NONHERMETIC }) === 1,
+  );
+}
+
+// ---------------------------------------------------------------------
 console.log('GATE CANARY — proving every gate still fails on known-bad input\n');
 canaryLint();
 canaryTypecheck();
@@ -282,6 +334,7 @@ canaryVisual();
 canaryAudit();
 canaryScanner();
 canaryGuard();
+canaryDeterminism();
 
 const failed = results.filter((r) => !r.pass);
 console.log(`\n--- SUMMARY: ${results.length - failed.length}/${results.length} canaries pass ---`);

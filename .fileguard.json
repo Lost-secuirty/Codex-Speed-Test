@@ -9,15 +9,16 @@
     "scripts/audit-drift.mjs": "6eceb52ab456af133fac5c5c71e047843bccf4933c534b846d5b0869cfe28420",
     "scripts/audit-lib.d.mts": "271f0acad2fb4201d4e7ced934f0bcf59d54fb3d631ad9da840699424ff6b122",
     "scripts/audit-lib.mjs": "acfc1d21a08c78b3f9cd2ef358502f42a5e9179b2795a81f23c3256b772ff15f",
-    "scripts/file-guard.mjs": "db526d0370c4386018a74c24e5e2329c1f9ab4a3c207e536c839fd2f99751786",
-    "scripts/gate-canary.mjs": "2e1de77fb3c86f02cf67250875e23d00762c3ae1d432a659fc73bfd410d14a81",
-    "scripts/mutation-probe.mjs": "5955ddd7b84960f9c0b92f18151ca53ec0fb80b75c300286972d0a87aa44e31f",
-    "scripts/preflight.mjs": "d65c2cfa5a7bdfe68b109d373493dea1baeee0d5f325bc32df19ac7ac52a031b",
+    "scripts/determinism.mjs": "a6eeffe205f216f65e44e5224abf5fd9210cf57a4d30ce4683ba0e4b7be0fff9",
+    "scripts/file-guard.mjs": "eec9d2bc2007ea1e313eabfdb9c795bc7901cafb0f8db7f74752da07f5c144d8",
+    "scripts/gate-canary.mjs": "be762cc6060c65634fcdda8382d5f0922594b02a6d5da2c6b5cc035bc492d4bc",
+    "scripts/mutation-probe.mjs": "37318370ae56e98101cd8f62d7e71188d366c5bc9f87a9d071436306b1ce990e",
+    "scripts/preflight.mjs": "95e3b1a85fbd75cff1da04fae120b96d72defe5528024d19d5e40b9d32e1f071",
     "tools/scan_staged.py": "719dba9dcf1ac29d868b49bcb546acb86ab51a45376eccd4329785e72cfb2204",
     "tsconfig.json": "28715541c008316ee8112825444350bc95cf6f0b2b71f8653eb9fbf8e8230f6b",
     "tsconfig.node.json": "88f5cb97a9a1c00731c39823d9b5ed522800007bef9d58d23f11f499e9fbd4d6",
     "verify.mjs": "c35360f5e8de1774b961236e7aa5a45c29bdf3f065b39e5af6091098e5995f3b",
     "vite.config.ts": "37552b7c9c3ff49f72162c250bcc6a01da68dd7ad891be274f1ca9c8d93bf188",
-    "vitest.config.ts": "45e8decefa9af7ecfb968922be2a9ebd323cadd2d693a64c250b3c3db37a8072"
+    "vitest.config.ts": "97ca413c04a27b8d394e0756a71d268468832d702380757e79f12dc646e37c62"
   }
 }

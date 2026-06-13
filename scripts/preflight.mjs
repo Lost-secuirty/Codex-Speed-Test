@@ -4,8 +4,8 @@
 // ADR-0007). Runs every gate in order and exits non-zero on any failure
 // or any high-severity drift finding. No push without a clean preflight.
 //
-//   lint → typecheck → unit → mutation → gate canary → file guard →
-//   browser (visual) → build → smoke (verify.mjs) → drift audit (--strict)
+//   lint → typecheck → unit → mutation → determinism → gate canary →
+//   file guard → browser (visual) → build → smoke → drift audit (--strict)
 //
 // The audit runs WITHOUT --run-checks here: preflight already executed
 // lint/typecheck/build itself (no duplicate work); CI's audit.yml keeps
@@ -66,6 +66,7 @@ ok = run('lint', 'npm', ['run', 'lint:ci']) && ok;
 ok = run('typecheck', 'npm', ['run', 'typecheck']) && ok;
 ok = run('unit', 'npm', ['test']) && ok;
 ok = run('mutation', 'npm', ['run', 'mutation']) && ok;
+ok = run('determinism', 'npm', ['run', 'determinism']) && ok;
 ok = run('gate canary', 'npm', ['run', 'canary']) && ok;
 ok = run('file guard', 'npm', ['run', 'guard']) && ok;
 

@@ -27,3 +27,4 @@ scaffolds it).
 | [0019](0019-responsible-design-governance.md) | Responsible-design governance: lever matrix, safety-frame doctrine, the refuse-list | Accepted | 2026-06-13 |
 | [0020](0020-excitation-transfer-machine-zone.md) | Excitation-transfer & the Machine-Zone thesis: the resolved ending (relief beat) | Accepted | 2026-06-13 |
 | [0021](0021-fail-loud-at-gates-safe-at-runtime.md) | Fail loud at the gates, fail safe-but-observable at runtime (file-guard, mutation provenance) | Accepted | 2026-06-13 |
+| [0022](0022-durable-storage-and-determinism-gate.md) | Durable opt-in storage wrapper + the determinism / RNG-isolation gate | Accepted | 2026-06-13 |

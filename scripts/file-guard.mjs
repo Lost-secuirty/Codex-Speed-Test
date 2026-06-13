@@ -43,6 +43,7 @@ const PROTECTED_FILES = [
   'scripts/audit-lib.d.mts',
   'scripts/mutation-probe.mjs',
   'scripts/gate-canary.mjs',
+  'scripts/determinism.mjs',
   'scripts/preflight.mjs',
   'scripts/file-guard.mjs',
   'verify.mjs',

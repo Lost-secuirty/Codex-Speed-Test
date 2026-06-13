@@ -19,6 +19,7 @@
     "test:visual:update": "vitest run --project browser --update",
     "mutation": "node scripts/mutation-probe.mjs",
     "canary": "node scripts/gate-canary.mjs",
+    "determinism": "node scripts/determinism.mjs",
     "guard": "node scripts/file-guard.mjs",
     "audit": "node scripts/audit-drift.mjs",
     "smoke": "node verify.mjs",
