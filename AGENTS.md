@@ -146,8 +146,8 @@ agent and subagent:
   tagged `[agent · date · VERIFIED|SECONDARY|MYTH]`. Append-only — mark
   superseded entries `SUPERSEDED:`, never delete another agent's entry.
 - **Your session story goes in `docs/kb/journal/<agent>.md`** (first person;
-  suspicions welcome; read your own journal on session start). Never edit
-  another agent's journal.
+  suspicions welcome). **On session start, read your OWN journal** — it is
+  your continuity across sessions. Never edit another agent's journal.
 - Scope: kb = the stack · ADRs = project decisions · LEARNINGS = project
   gotchas. Distill tool-facts out of LEARNINGS into kb when you spot them.
 

@@ -11,6 +11,11 @@ on:
     branches: [main, 'claude/**']
   pull_request:
 
+# Stale runs on the same ref waste runners — cancel them (demo-math PR #28).
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 

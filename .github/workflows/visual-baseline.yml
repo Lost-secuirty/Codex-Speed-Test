@@ -15,6 +15,12 @@ on:
         required: true
         type: string
 
+# Serialize per ref but NEVER cancel — a half-pushed baseline commit is worse
+# than a slow queue (demo-math PR #28, adapted).
+concurrency:
+  group: baseline-${{ github.ref }}
+  cancel-in-progress: false
+
 permissions:
   contents: write
 
