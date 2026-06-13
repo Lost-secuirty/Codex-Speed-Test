@@ -37,6 +37,7 @@ So: sheets lean on examples, skip what every model already knows.
 | [pixi-8-gsap.md](pixi-8-gsap.md) | PixiJS v8 API + footguns, @pixi/ui, GSAP licensing/timing | pixi.js 8.19.x · gsap 3.15.x |
 | [environment-ci.md](environment-ci.md) | THIS container + GitHub CI: network policy, PW_CHROMIUM, actor guards, shell quirks | session-verified |
 | [webaudio.md](webaudio.md) | Web Audio synthesis + OfflineAudioContext testing in CI, Shepard/missing-fundamental recipes | Chrome 141/148 |
+| [gambling-psychology-mechanisms.md](gambling-psychology-mechanisms.md) | Behavioral-mechanism catalog: grade · wired · honest counter · declined; the safety-frame line | 2026-06-13 |
 
 ## Journals
 

@@ -5,6 +5,46 @@ Grep this for the module you're about to edit (Working Agreement #11). When it
 exceeds ~500 lines the `learnings-distill-due` audit check nags — distill
 evergreen rules into `GOLDEN_RULES.md` via a Scott-reviewed PR.
 
+## 2026-06-13
+
+- **Research-ingestion arc, PR-A (capture + govern) — the governance leads the
+  code, by design.** Folded the operator's 7 research syntheses into graded
+  evidence + responsible-design artifacts (no code this PR). EVIDENCE.md gained a
+  Round-3 pass: 4 new § sections (Addiction & persistence; Individual
+  differences; Recreational fear & the safety frame; Market) and 3 held rows
+  updated. **4 primaries independently web-verified → VERIFIED:** punishment-
+  insensitivity = instrumental-contingency-detection failure (eLife PMC8177883 —
+  the humane reframe: pain felt, action→harm mapping broken); near-miss↔SOGS
+  severity (Chase & Clark 2010); excitation-transfer (Zillmann — resolved endings
+  maximise relief); the Machine Zone (Schüll). Everything else graded SECONDARY
+  (synthesis-sourced) — held the line against overclaiming (R3 risk #1).
+- **The differentiator shipped: `RESPONSIBLE-DESIGN.md` + ADR-0019.** The artifact
+  almost nobody writes — a lever matrix (default · honest counter · grade · harm
+  · reversible), the safety-frame doctrine (no stakes + intact frame + legible +
+  honest counter = study, not trap), and the **refuse-list**: levers the same
+  research describes that we DECLINE, each with mechanism + why-it-crosses + what-
+  it'd-take (Machine-Zone trance loop; loss-chasing reinforcement; per-player RDS
+  tuning; covert player measurement = human-subjects/IRB; typology targeting).
+  Rule of thumb encoded: "if the main effect is *stickier* with no study value,
+  it's refuse-list, not backlog."
+- **ADR-0020 (excitation-transfer / Machine-Zone thesis):** a horror aesthetic
+  structurally *resists* the dissociative trance → the **relief beat** (PR-B): the
+  Shepard resolves, a relief cue lands; `reliefResolves` defaults TRUE — a
+  deliberate inversion of ADR-0014's extractive-default, because here the honest
+  ending is also the better craft. Recorded as a testable *thesis*, not a finding.
+- **Method note for future ingestion:** research-synthesis docs are SECONDARY by
+  default; promote only on an independently-read primary abstract. Grading
+  against the synthesis would have silently inflated the whole evidence base — the
+  meta-audit checks each grade against its actual source.
+- **Pre-push meta-audit (PR-A): 0 high, evidence base held.** Confirmed exactly
+  the 4 named primaries graded VERIFIED with citations consistent across all 6
+  docs; refuse-list #1–#5 numbering + rationales aligned; matrix counters all
+  non-empty; the `reliefResolves` default-TRUE inversion logged vs ADR-0014. One
+  MED drift caught + fixed: the KB mechanism sheet (whose whole job is wired-vs-
+  declined) marked the relief beat "wired" though it's PR-B/unbuilt → corrected to
+  "planned PR-B." The sheet that tracks ship-state is exactly where a false
+  wired-flag matters most.
+
 ## 2026-06-12
 
 - **Cross-repo port from demo-math #28 (Scott's separate session there).**
