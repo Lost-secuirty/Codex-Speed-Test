@@ -60,3 +60,24 @@ Dependabot.
 
 Add a prototype: create `src/prototypes/<name>/{index.html,main.ts}`, register
 it in `src/prototypes-manifest.ts`, give it a visual test in `test/browser/`.
+
+## Repo map (the six-slot model)
+
+Every connected repo is the same skeleton — **rules → memory → decisions →
+agent-tooling → verification → product**. In this repo:
+
+- **Rules** — [`AGENTS.md`](AGENTS.md) (contract) · [`CLAUDE.md`](CLAUDE.md) (pointer) · [`GOLDEN_RULES.md`](GOLDEN_RULES.md) (cheat-sheet) · [`SECURITY.md`](SECURITY.md) · [`SETTINGS-CHECKLIST.md`](SETTINGS-CHECKLIST.md)
+- **Memory** — `docs/LEARNINGS.md` (gotchas) · `docs/kb/` (tool crib sheets + per-agent journal) · `docs/audit-history.ndjson` (the auditor's own memory)
+- **Decisions** — `docs/adr/` (the "why" trail)
+- **Agent tooling** — `.claude/` (auditor/explorer/planner roles · slash-commands · hooks)
+- **Verification** — `scripts/` (preflight · drift audit · mutation · canary · determinism · file-guard) + `.github/workflows/` + the secret/PII gate
+- **Product** — `src/lib/` (pure, strictly-tested) + `src/prototypes/` (thin render)
+
+Full cross-repo version + each repo's role + the autonomy↔human-gate axis:
+[`docs/REPO-TOPOLOGY.md`](docs/REPO-TOPOLOGY.md).
+
+## Deeper reads
+
+- [`docs/WALKTHROUGH.md`](docs/WALKTHROUGH.md) — plain-language **and** technical walk-through of this repo (what it is, how it works, the gates, honest limits).
+- [`docs/REPO-TOPOLOGY.md`](docs/REPO-TOPOLOGY.md) — the six-slot model across every connected repo + each repo's role.
+- [`docs/2026-directional-report.md`](docs/2026-directional-report.md) — why the verification layer matters (the "verification is the bottleneck" thesis, sourced; Anthropic's *When AI builds itself* frames the same point).
