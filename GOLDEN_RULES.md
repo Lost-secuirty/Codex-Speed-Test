@@ -60,3 +60,12 @@ AGENTS.md stays canonical and wins on any conflict.
     happen AND written in the PR's `## Deviations from plan`. _(WA #10)_
 17. **Memory at point of use** — grep `docs/LEARNINGS.md` for the module
     before editing it; distill when >500 lines (Scott-reviewed PR). _(WA #11)_
+
+## The signature lesson
+
+18. **Green must mean something** — a gate, test, or mutant that passes while
+    inert is *vacuous green*, this repo's defining bug class: coverage is
+    per-target (a new pure module isn't mutation-probed until it has its OWN
+    mutant), a probed/tested helper with no caller tests nothing, a tautological
+    assert can never fail. Canaries run the REAL config; `npm run canary`
+    fossilizes the trip-matrix so every gate must still BITE. _(ADR-0007 / ADR-0016)_
