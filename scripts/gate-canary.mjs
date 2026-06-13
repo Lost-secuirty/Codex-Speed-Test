@@ -19,7 +19,8 @@
 //
 // Covered:   lint core rule, all 3 GritQL footgun plugins, typecheck,
 //            visual comparator thresholds (the dark-drift probe),
-//            drift-audit bad-ref refusal, secret-scanner self-test.
+//            drift-audit bad-ref refusal, secret-scanner self-test,
+//            file-guard (modified/removed/unbaselined), determinism gate.
 // Self-canarying elsewhere (not duplicated here): the mutation probe
 //            fails on survivors AND on skipped mutants; every KILLED
 //            mutant already proves the unit gate detects failure.
@@ -210,6 +211,18 @@ function canaryScanner() {
     res.status === 0,
     (res.stdout || '').trim().split('\n').at(-1) || `exit ${res.status}`,
   );
+  // bad-base refusal: --ci on an unresolvable ref must exit 2, never scan an
+  // empty range and report green (the silent empty-range class, ADR-0007).
+  const badBase = spawnSync(
+    'python3',
+    ['tools/scan_staged.py', '--ci', '--base', 'canary-no-such-ref'],
+    { cwd: REPO, encoding: 'utf8' },
+  );
+  record(
+    'scanner: refuses unresolvable base ref (exit 2)',
+    badBase.status === 2,
+    `exit ${badBase.status}`,
+  );
 }
 
 // ---------------------------------------------------------------------
@@ -229,6 +242,7 @@ function canaryGuard() {
       'biome-plugins',
       'tools',
       '.githooks',
+      '.claude',
       'biome.json',
       'vite.config.ts',
       'vitest.config.ts',
@@ -266,12 +280,70 @@ function canaryGuard() {
     record('guard: BITES on an UNBASELINED glob match', guard().status === 1);
     rmSync(intruder, { force: true });
 
+    // MODIFIED (.claude): the agent-control surface (settings + hooks) is
+    // guarded too — tamper a staged hook, then restore it from REPO.
+    const hook = join(dir, '.claude', 'hooks', 'guard.sh');
+    writeFileSync(hook, `${readFileSync(hook, 'utf8')}\n# canary tamper\n`);
+    record('guard: BITES on a MODIFIED .claude hook', guard().status === 1);
+    cpSync(join(REPO, '.claude', 'hooks', 'guard.sh'), hook);
+
     // REMOVED: delete a guarded file (last case — no restore needed).
     rmSync(join(dir, 'tools', 'scan_staged.py'), { force: true });
     record('guard: BITES on a REMOVED protected file', guard().status === 1);
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
+}
+
+// ---------------------------------------------------------------------
+// 7. determinism — the gate must BITE on a non-hermetic test. Stage a temp
+//    root (real vitest config + symlinked node_modules) with planted unit
+//    tests and run the REAL scripts/determinism.mjs against it: clean passes,
+//    a clock-dependent test (flips between the gate's UTC and Asia/Kolkata
+//    runs) makes it fail.
+// ---------------------------------------------------------------------
+function canaryDeterminism() {
+  const HERMETIC =
+    "import { describe, it, expect } from 'vitest';\n" +
+    "describe('hermetic', () => { it('is stable', () => { expect(1 + 1).toBe(2); }); });\n";
+  // Reads wall-clock TZ: passes under the gate's run-1 (TZ=UTC, offset 0),
+  // fails under run-2 (TZ=Asia/Kolkata, offset -330) — a guaranteed flip.
+  const NONHERMETIC =
+    "import { describe, it, expect } from 'vitest';\n" +
+    "describe('clock-dependent', () => { it('reads the local timezone', () => { expect(new Date().getTimezoneOffset()).toBe(0); }); });\n";
+
+  const stageAndRun = (files) => {
+    const dir = mkdtempSync(join(tmpdir(), 'cst-canary-determ-'));
+    try {
+      cpSync(join(REPO, 'vitest.config.ts'), join(dir, 'vitest.config.ts'));
+      cpSync(join(REPO, 'package.json'), join(dir, 'package.json'));
+      symlinkSync(
+        join(REPO, 'node_modules'),
+        join(dir, 'node_modules'),
+        process.platform === 'win32' ? 'junction' : 'dir',
+      );
+      mkdirSync(join(dir, 'test', 'unit'), { recursive: true });
+      for (const [name, src] of Object.entries(files)) {
+        writeFileSync(join(dir, 'test', 'unit', name), src);
+      }
+      return spawnSync(
+        process.execPath,
+        [join(REPO, 'scripts', 'determinism.mjs'), '--root', dir],
+        {
+          cwd: dir,
+          encoding: 'utf8',
+        },
+      ).status;
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  };
+
+  record('determinism: clean hermetic suite passes', stageAndRun({ 'a.test.ts': HERMETIC }) === 0);
+  record(
+    'determinism: BITES on a clock-dependent test',
+    stageAndRun({ 'a.test.ts': HERMETIC, 'b.test.ts': NONHERMETIC }) === 1,
+  );
 }
 
 // ---------------------------------------------------------------------
@@ -282,6 +354,7 @@ canaryVisual();
 canaryAudit();
 canaryScanner();
 canaryGuard();
+canaryDeterminism();
 
 const failed = results.filter((r) => !r.pass);
 console.log(`\n--- SUMMARY: ${results.length - failed.length}/${results.length} canaries pass ---`);

@@ -35,6 +35,7 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       - run: npm run mutation
+      - run: npm run determinism
       - run: npm run canary
       - run: npm run guard
       - run: npm run build

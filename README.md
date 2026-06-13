@@ -28,6 +28,9 @@ tripped each one deliberately — see `docs/LEARNINGS.md`).
 | Typecheck (TS strict) | `npm run typecheck` | ci.yml `checks` |
 | Unit tests (Vitest) | `npm test` | ci.yml `checks` |
 | Mutation probe | `npm run mutation` | ci.yml `checks` |
+| Determinism gate (order/clock invariance) | `npm run determinism` | ci.yml `checks` |
+| Gate canary (every gate still bites) | `npm run canary` | ci.yml `checks` |
+| File guard (sha256 freeze of safety machinery) | `npm run guard` | ci.yml `checks` |
 | Build (Vite 8) | `npm run build` | ci.yml `checks` |
 | Visual regression (Vitest Browser Mode) | `npm run test:browser` | ci.yml `browser` |
 | E2E smoke (Playwright) | `npm run smoke` | ci.yml `smoke` |
@@ -53,6 +56,7 @@ Dependabot.
 | Prototype | What it proves |
 | --- | --- |
 | [`reel-spin-shell`](src/prototypes/reel-spin-shell/) | The scaffold: 3 procedural reels, GSAP spin, sound hooks, visual baseline |
+| [`spokey-lights-out`](src/prototypes/spokey-lights-out/) | LIGHTS OUT: 5×4 ways base + hold&win, darkness-as-data, proximity, synth audio |
 
 Add a prototype: create `src/prototypes/<name>/{index.html,main.ts}`, register
 it in `src/prototypes-manifest.ts`, give it a visual test in `test/browser/`.

@@ -52,3 +52,40 @@ describe('pick', () => {
     expect(() => pick(mulberry32(1), [])).toThrow('empty');
   });
 });
+
+describe('mulberry32 isolation (ADR-0022, A1)', () => {
+  // The isolation property is an ABSENCE of coupling (no global RNG read/write),
+  // not a mutable source line — so it carries no matching mutation-probe mutant;
+  // the existing `randInt` mutant is rng.ts's probe teeth.
+
+  it('replays a long identical sequence for the same seed', () => {
+    const a = mulberry32(424242);
+    const b = mulberry32(424242);
+    expect(Array.from({ length: 64 }, () => a())).toEqual(Array.from({ length: 64 }, () => b()));
+  });
+
+  it('does not read or advance global Math.random state', () => {
+    const ref = mulberry32(7);
+    const refSeq = Array.from({ length: 32 }, () => ref());
+    const probe = mulberry32(7);
+    const probeSeq = Array.from({ length: 32 }, () => {
+      Math.random(); // perturb the GLOBAL rng between every draw
+      return probe();
+    });
+    // mulberry32's stream is identical whether or not Math.random ran.
+    expect(probeSeq).toEqual(refSeq);
+  });
+
+  it('keeps two instances independent (no shared hidden state)', () => {
+    const solo = mulberry32(99);
+    const soloSeq = Array.from({ length: 16 }, () => solo());
+    const a = mulberry32(99);
+    const b = mulberry32(123);
+    const interleaved: number[] = [];
+    for (let i = 0; i < 16; i++) {
+      interleaved.push(a());
+      b(); // advance the other instance between a()'s draws
+    }
+    expect(interleaved).toEqual(soloSeq);
+  });
+});

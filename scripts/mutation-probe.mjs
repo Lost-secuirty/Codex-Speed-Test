@@ -282,6 +282,37 @@ const MUTATIONS = [
     find: 'cue: settleCue(total, p.ldwThreshold ?? 0, p.ldwHonest ?? false),',
     replace: 'cue: settleCue(total, 0, false),',
   },
+  // --- storage: durable wrapper (ADR-0022) — the previous-good/validate/observe seam ---
+  {
+    name: 'storage: durable read never tries the previous-good copy',
+    file: 'src/lib/storage.ts',
+    find: 'const prev = readCandidate<T>(currentKey + PREV_SUFFIX, key, opts);',
+    replace: 'const prev = undefined;',
+  },
+  {
+    name: 'storage: durable validator bypassed (corrupt payload trusted)',
+    file: 'src/lib/storage.ts',
+    find: "if (!opts.validate(record.data)) return { ok: false, reason: 'invalid' };",
+    replace: "if (false) return { ok: false, reason: 'invalid' };",
+  },
+  {
+    name: 'storage: durable version mismatch accepted (any v trusted)',
+    file: 'src/lib/storage.ts',
+    find: "if (record.v !== opts.version) return { ok: false, reason: 'version' };",
+    replace: "if (false) return { ok: false, reason: 'version' };",
+  },
+  {
+    name: 'storage: durable fallback counter never increments (silent degrade)',
+    file: 'src/lib/storage.ts',
+    find: 'durableFallbacks++;',
+    replace: 'durableFallbacks += 0;',
+  },
+  {
+    name: 'storage: overwrite drops the previous-good promotion',
+    file: 'src/lib/storage.ts',
+    find: 'globalThis.localStorage.setItem(prevKey, existingRaw);',
+    replace: 'void prevKey;',
+  },
 ];
 
 // Provenance — the dice-lab "every survivor gets a NAMED regression test"

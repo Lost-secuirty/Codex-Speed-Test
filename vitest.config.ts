@@ -13,6 +13,10 @@ export default defineConfig({
           name: 'unit',
           environment: 'node',
           include: ['test/unit/**/*.test.ts'],
+          // Shuffle test order (fixed seed = reproducible) so inter-test deps
+          // surface; scripts/determinism.mjs then proves the outcome is invariant
+          // across seeds + clock (ADR-0022, gap A1).
+          sequence: { shuffle: true, seed: 0xc0de },
         },
       },
       {

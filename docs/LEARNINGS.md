@@ -7,6 +7,30 @@ evergreen rules into `GOLDEN_RULES.md` via a Scott-reviewed PR.
 
 ## 2026-06-13
 
+- **Slot-bundle salvage → durable storage + a determinism gate (ADR-0022).** Swept
+  an uploaded Python slot build; the math-testing discipline was already stronger in
+  demo-math (nothing to port), but two patterns landed here:
+  - **`storage.ts` durable opt-in API** (`saveDurable`/`loadDurable`): version tag +
+    validate-on-read + one previous-good `:prev` copy + an OBSERVABLE
+    `durableFallbackCount()` counter (+ dev-mode warn) — the ADR-0021 silent-swallow
+    fix. Silent `loadJSON`/`saveJSON` stay as the responsible default for
+    non-load-bearing keys; 5 new mutants pin it. **Gotchas:** keep `globalThis.localStorage`
+    (the storage-firewall grit plugin doesn't match it — a helper module would trip
+    it); `import.meta.env?.DEV` accessed via `as unknown as { env?… }` so the `node`
+    unit env can't throw; `:prev` is a RESERVED key suffix; durable records (`{v,data}`)
+    are NOT `loadJSON`-readable (one-way door). Note: storage.ts has **no `src/`
+    callers yet** — this is pre-emptive hardening.
+  - **`scripts/determinism.mjs` (`npm run determinism`)**: runs the unit project twice
+    under a different shuffle seed + a different `TZ`, fails loud naming any test whose
+    pass/fail FLIPS (order/clock dependence). The `unit` project now shuffles (fixed
+    seed `0xc0de`). Wired into preflight (after `mutation`) + CI, canaried by
+    `canaryDeterminism` (a TZ-dependent `getTimezoneOffset()` test flips between the
+    gate's UTC and Asia/Kolkata runs — a *guaranteed* bite; order-only fixtures are
+    flaky in a 2-test tree). `mulberry32` got isolation tests (no global-`Math.random`
+    coupling) — the isolation property has no mutant (absence-of-coupling, not a source
+    line); the existing `randInt` mutant stays its teeth. file-guard now freezes 19
+    files (added `determinism.mjs`). Verified: the real suite is invariant (128 tests).
+
 - **Dice-lab harvest → `file-guard` + mutation provenance (ADR-0021).** Mined a
   Drive "dice-duel reliability lab" for reusable patterns. Three landed as one
   doctrine — *fail loud at the gates, fail safe-but-observable at runtime*:

@@ -37,6 +37,9 @@ npm test               # vitest unit project (pure logic, node env)
 npm run test:browser   # vitest browser project (real Chromium, visual regression)
 npm run test:visual:update  # regenerate visual baselines — DELIBERATE runs only
 npm run mutation       # mutation probe against src/lib pure modules
+npm run determinism    # determinism gate — unit suite must be order/clock invariant
+npm run canary         # gate canary — proves every gate still bites on known-bad input
+npm run guard          # file-guard — sha256 freeze of the safety machinery (-- --update to re-baseline)
 npm run smoke          # Playwright E2E smoke vs the preview build (verify.mjs)
 npm run audit          # drift audit on the current branch (docs/DRIFT-AUDIT.md)
 npm run preflight      # THE pre-push gate: all of the above, strict (scripts/preflight.mjs)

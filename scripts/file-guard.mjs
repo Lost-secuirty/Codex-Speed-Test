@@ -43,6 +43,7 @@ const PROTECTED_FILES = [
   'scripts/audit-lib.d.mts',
   'scripts/mutation-probe.mjs',
   'scripts/gate-canary.mjs',
+  'scripts/determinism.mjs',
   'scripts/preflight.mjs',
   'scripts/file-guard.mjs',
   'verify.mjs',
@@ -53,10 +54,11 @@ const PROTECTED_FILES = [
   'tsconfig.node.json',
   'tools/scan_staged.py',
   '.githooks/pre-commit',
+  '.claude/settings.json',
 ];
 // Globs expand to whatever currently matches — so adding or deleting a
 // footgun plugin is itself a drift event until the baseline is bumped.
-const PROTECTED_GLOBS = ['biome-plugins/*.grit'];
+const PROTECTED_GLOBS = ['biome-plugins/*.grit', '.claude/hooks/*.sh'];
 const MANIFEST_NAME = '.fileguard.json';
 
 const argv = process.argv.slice(2);
