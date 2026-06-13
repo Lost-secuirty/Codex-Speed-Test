@@ -11,7 +11,7 @@
     "biome-plugins/pixi-globalpointermove.grit": "67e09666519b0f37177308b0925c24c75d24f595bef166b9e9d043e4eac85023",
     "biome-plugins/storage-firewall.grit": "eb57ea1f4e0293b30be3647b06e1e8841791d8623bcd4af225fdd996738c3ede",
     "biome.json": "62bb9362992e44a648badc48dc94381b5dc8f30523993975dfca0d5954f015d5",
-    "scripts/audit-drift.mjs": "6eceb52ab456af133fac5c5c71e047843bccf4933c534b846d5b0869cfe28420",
+    "scripts/audit-drift.mjs": "b8c9d8ee6122322aba986c6dbc38de12404fabc2dd1932282570e1269d37fc3b",
     "scripts/audit-lib.d.mts": "271f0acad2fb4201d4e7ced934f0bcf59d54fb3d631ad9da840699424ff6b122",
     "scripts/audit-lib.mjs": "acfc1d21a08c78b3f9cd2ef358502f42a5e9179b2795a81f23c3256b772ff15f",
     "scripts/determinism.mjs": "a6eeffe205f216f65e44e5224abf5fd9210cf57a4d30ce4683ba0e4b7be0fff9",

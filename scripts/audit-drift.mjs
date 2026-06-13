@@ -182,7 +182,7 @@ scan(
 
 // sensitive paths — gates, agent config, deps, build config, baselines.
 const SENSITIVE_RE =
-  /^\.github\/|^\.githooks\/|^\.claude\/|^tools\/scan_staged\.py$|^scripts\/(audit-(drift|lib)\.mjs|preflight\.mjs|mutation-probe\.mjs)$|(^|\/)package(-lock)?\.json$|^tsconfig[^/]*\.json$|^vite\.config\.ts$|^vitest\.config\.ts$|^verify\.mjs$|^biome\.json$|^biome-plugins\/|^\.gitattributes$|^SECURITY\.md$|^AGENTS\.md$|^test\/browser\/__screenshots__\//;
+  /^\.github\/|^\.githooks\/|^\.claude\/|^\.fileguard\.json$|^tools\/scan_staged\.py$|^scripts\/(audit-(drift|lib)\.mjs|audit-lib\.d\.mts|preflight\.mjs|mutation-probe\.mjs|gate-canary\.mjs|file-guard\.mjs|determinism\.mjs)$|(^|\/)package(-lock)?\.json$|^tsconfig[^/]*\.json$|^vite\.config\.ts$|^vitest\.config\.ts$|^verify\.mjs$|^biome\.json$|^biome-plugins\/|^\.gitattributes$|^SECURITY\.md$|^AGENTS\.md$|^test\/browser\/__screenshots__\//;
 const sensitive = changedPaths.filter((p) => SENSITIVE_RE.test(p));
 if (sensitive.length) {
   add(
