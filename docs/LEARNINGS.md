@@ -18,9 +18,10 @@ evergreen rules into `GOLDEN_RULES.md` via a Scott-reviewed PR.
     the bump then shows in the diff. It's the loud complement to audit-drift's
     MEDIUM, ref-relative `sensitive-paths` nag (which goes vacuous on a bad base
     ref; the guard doesn't). Tamper-EVIDENT, not -proof (change + re-snapshot in
-    one commit passes → the point is human review of the pair). Wired into
-    preflight after the canary, and proven to bite by a new `canaryGuard()` case
-    (a guard with no canary is the vacuous-green trap this repo obsesses over).
+    one commit passes → the point is human review of the pair). Wired into BOTH
+    the preflight gate (after the canary) and the CI `checks` job, and proven to
+    bite by a new `canaryGuard()` case (a guard with no canary is the
+    vacuous-green trap this repo obsesses over).
   - **Mutation provenance** — `mutation-probe.mjs` now REQUIRES each mutant to
     name the suite that kills it (`FILE_TO_TEST`, existence-checked) and prints it
     on SURVIVED. A new module with no registered suite fails the probe loud.

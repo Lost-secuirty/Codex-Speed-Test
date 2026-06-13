@@ -49,7 +49,8 @@ land with this ADR:
   tamper-proof** — a change plus a re-snapshot in the same commit passes; the
   guard only forces the pair in front of a human. It is the loud, content-
   addressed complement to audit-drift's medium, ref-relative `sensitive-paths`
-  nag (which goes vacuous on a bad base ref; the guard does not). Proven to bite
+  nag (which goes vacuous on a bad base ref; the guard does not). It runs in
+  both the local preflight gate and the CI `checks` job, and is proven to bite
   by a new gate-canary case.
 - **Mutation provenance** — `scripts/mutation-probe.mjs` now requires every
   mutant to name the unit suite meant to kill it (resolved via `FILE_TO_TEST`,
