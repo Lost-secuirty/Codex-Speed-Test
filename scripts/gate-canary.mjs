@@ -213,12 +213,75 @@ function canaryScanner() {
 }
 
 // ---------------------------------------------------------------------
+// 6. file guard — must BITE when a protected file is tampered. Stage the
+//    real safety machinery into a temp root, baseline it, confirm a clean
+//    check passes, then flip one byte and confirm the guard fails. Runs the
+//    REAL scripts/file-guard.mjs against the copy (--root), so a guard gone
+//    soft can't hide behind a private fixture.
+// ---------------------------------------------------------------------
+function canaryGuard() {
+  const dir = mkdtempSync(join(tmpdir(), 'cst-canary-guard-'));
+  try {
+    // Containers of every protected path (whole dirs catch new members for
+    // free; only a brand-new ROOT-level protected file would need adding).
+    const stage = [
+      'scripts',
+      'biome-plugins',
+      'tools',
+      '.githooks',
+      'biome.json',
+      'vite.config.ts',
+      'vitest.config.ts',
+      'tsconfig.json',
+      'tsconfig.node.json',
+      'verify.mjs',
+    ];
+    for (const p of stage) cpSync(join(REPO, p), join(dir, p), { recursive: true });
+    const guard = (...extra) =>
+      spawnSync(
+        process.execPath,
+        [
+          join(REPO, 'scripts', 'file-guard.mjs'),
+          '--root',
+          dir,
+          '--manifest',
+          join(dir, '.fileguard.json'),
+          ...extra,
+        ],
+        { cwd: dir, encoding: 'utf8' },
+      );
+    record('guard: baseline writes over the protected set', guard('--update').status === 0);
+    record('guard: clean check passes on an untouched tree', guard().status === 0);
+
+    // MODIFIED: flip one byte in a guarded file, then restore it from REPO.
+    const victim = join(dir, 'scripts', 'preflight.mjs');
+    writeFileSync(victim, `${readFileSync(victim, 'utf8')}\n// canary tamper\n`);
+    record('guard: BITES on a MODIFIED protected file', guard().status === 1);
+    cpSync(join(REPO, 'scripts', 'preflight.mjs'), victim);
+
+    // UNBASELINED: add a file matching a protected glob but absent from the
+    // baseline, then remove it.
+    const intruder = join(dir, 'biome-plugins', 'zz-canary.grit');
+    writeFileSync(intruder, '// canary\n');
+    record('guard: BITES on an UNBASELINED glob match', guard().status === 1);
+    rmSync(intruder, { force: true });
+
+    // REMOVED: delete a guarded file (last case — no restore needed).
+    rmSync(join(dir, 'tools', 'scan_staged.py'), { force: true });
+    record('guard: BITES on a REMOVED protected file', guard().status === 1);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+}
+
+// ---------------------------------------------------------------------
 console.log('GATE CANARY — proving every gate still fails on known-bad input\n');
 canaryLint();
 canaryTypecheck();
 canaryVisual();
 canaryAudit();
 canaryScanner();
+canaryGuard();
 
 const failed = results.filter((r) => !r.pass);
 console.log(`\n--- SUMMARY: ${results.length - failed.length}/${results.length} canaries pass ---`);
