@@ -1,6 +1,11 @@
 {
   "version": 1,
   "files": {
+    ".claude/hooks/format.sh": "1f31a286c4de7913b7901f3f8bb4807909314a2d63e6a9103d88b23297283d80",
+    ".claude/hooks/guard.sh": "d25a1f8c9ab1ac9de7331cea03f74e90d06b7cf00b807dd45233d5a14dd3d4a5",
+    ".claude/hooks/log.sh": "83d962bbb19be0690385359eee46d5b2d95a8ff247b807f056439aaddcdb9d6d",
+    ".claude/hooks/session-start.sh": "4772e99a3e6e5bcba4d81c1031d0afa36801bda3e2d65c7c36f63dd302fa42d5",
+    ".claude/settings.json": "0dffc9a54f9691364612af4eff612a89e2daaf0b72f706caa94af9fbc281c159",
     ".githooks/pre-commit": "7a217abde533270e03771282860dbc5a08bcda5c56115935f67545ff7c5e6ae3",
     "biome-plugins/pixi-generate-texture-region.grit": "d8f51b75cbc788f1e06bedf9f995c7df142595f246c11996573e085607524019",
     "biome-plugins/pixi-globalpointermove.grit": "67e09666519b0f37177308b0925c24c75d24f595bef166b9e9d043e4eac85023",
@@ -10,8 +15,8 @@
     "scripts/audit-lib.d.mts": "271f0acad2fb4201d4e7ced934f0bcf59d54fb3d631ad9da840699424ff6b122",
     "scripts/audit-lib.mjs": "acfc1d21a08c78b3f9cd2ef358502f42a5e9179b2795a81f23c3256b772ff15f",
     "scripts/determinism.mjs": "a6eeffe205f216f65e44e5224abf5fd9210cf57a4d30ce4683ba0e4b7be0fff9",
-    "scripts/file-guard.mjs": "eec9d2bc2007ea1e313eabfdb9c795bc7901cafb0f8db7f74752da07f5c144d8",
-    "scripts/gate-canary.mjs": "be762cc6060c65634fcdda8382d5f0922594b02a6d5da2c6b5cc035bc492d4bc",
+    "scripts/file-guard.mjs": "089000fd842631a5ce1ceedbd51e47ad68d2edd2c909ef6b5d6744b3f68dda13",
+    "scripts/gate-canary.mjs": "26a7123b2b7eca18037703f2ef3fe7c77266670f23aea2f821c80bf4089e82d5",
     "scripts/mutation-probe.mjs": "37318370ae56e98101cd8f62d7e71188d366c5bc9f87a9d071436306b1ce990e",
     "scripts/preflight.mjs": "95e3b1a85fbd75cff1da04fae120b96d72defe5528024d19d5e40b9d32e1f071",
     "tools/scan_staged.py": "719dba9dcf1ac29d868b49bcb546acb86ab51a45376eccd4329785e72cfb2204",

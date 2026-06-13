@@ -230,6 +230,7 @@ function canaryGuard() {
       'biome-plugins',
       'tools',
       '.githooks',
+      '.claude',
       'biome.json',
       'vite.config.ts',
       'vitest.config.ts',
@@ -266,6 +267,13 @@ function canaryGuard() {
     writeFileSync(intruder, '// canary\n');
     record('guard: BITES on an UNBASELINED glob match', guard().status === 1);
     rmSync(intruder, { force: true });
+
+    // MODIFIED (.claude): the agent-control surface (settings + hooks) is
+    // guarded too — tamper a staged hook, then restore it from REPO.
+    const hook = join(dir, '.claude', 'hooks', 'guard.sh');
+    writeFileSync(hook, `${readFileSync(hook, 'utf8')}\n# canary tamper\n`);
+    record('guard: BITES on a MODIFIED .claude hook', guard().status === 1);
+    cpSync(join(REPO, '.claude', 'hooks', 'guard.sh'), hook);
 
     // REMOVED: delete a guarded file (last case — no restore needed).
     rmSync(join(dir, 'tools', 'scan_staged.py'), { force: true });
