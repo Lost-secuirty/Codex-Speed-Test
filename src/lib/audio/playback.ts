@@ -318,6 +318,15 @@ export function createPlayback(ctx: BaseAudioContext): Playback {
         osc('triangle', intent.freq * 0.5, bus, t0, intent.attackMs, intent.durationMs, gain * 0.3);
         break;
       }
+      default: {
+        // exhaustiveness guard (PR-B meta-audit follow-up, WA #6 / ADR-0007): a
+        // new SynthKind added without a case above is a COMPILE error here, not
+        // a silently-silent cue. `intent.kind` narrows to `never` only when every
+        // kind is handled. Non-throwing on purpose — a cosmetic audio path should
+        // degrade to silence, never crash the scene, on an impossible value.
+        const _exhaustive: never = intent.kind;
+        void _exhaustive;
+      }
     }
   }
 

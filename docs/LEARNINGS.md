@@ -7,6 +7,18 @@ evergreen rules into `GOLDEN_RULES.md` via a Scott-reviewed PR.
 
 ## 2026-06-13
 
+- **Gate-strengthening follow-up (the PR-B audit's latent item) — shipped.** Added
+  an exhaustiveness `default` to `playback.ts`'s `switch (intent.kind)`: a future
+  `SynthKind` added without a case is now a COMPILE error, not a silently-silent
+  cue. Non-throwing on purpose (`const _exhaustive: never = intent.kind; void …`)
+  — a cosmetic audio path should degrade to silence, never crash the scene, on an
+  impossible value; the value is the compile-time guarantee. **Gate-trip evidence
+  (WA #6, "trip each new gate once"):** with all cases handled, `intent.kind`
+  narrows to `never` and typecheck passes; removing any one case (tested:
+  `noise-tick`) yields `error TS2322: Type '"noise-tick"' is not assignable to
+  type 'never'` → typecheck fails. Restored, green. This closes the silent-cue
+  class the PR-B meta-audit flagged — gates only strengthen.
+
 - **Research-ingestion arc, PR-B (the relief beat) — the one lever, shipped.**
   The excitation-transfer payoff (ADR-0020): the feature now ends on a `relief`
   cue — a warm consonant major-triad `resolve` synth that lands the endless rise
