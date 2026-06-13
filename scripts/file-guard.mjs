@@ -108,7 +108,18 @@ function doCheck() {
     console.error(`file-guard: no baseline at ${manifestPath}. Run: npm run guard -- --update`);
     process.exit(2);
   }
-  const baseline = JSON.parse(readFileSync(manifestPath, 'utf8')).files || {};
+  let baseline;
+  try {
+    baseline = JSON.parse(readFileSync(manifestPath, 'utf8')).files || {};
+  } catch (err) {
+    // A corrupt baseline is exactly the tampered/inert case the guard exists
+    // for — fail with a NAMED error (exit 2), not an uncaught SyntaxError that
+    // only exits non-zero by Node's default. Honour ADR-0021's own thesis.
+    console.error(
+      `file-guard: baseline ${manifestPath} is unreadable or corrupt (${err.message}). Re-create it with: npm run guard -- --update`,
+    );
+    process.exit(2);
+  }
   const keys = new Set([...Object.keys(baseline), ...expectedSet()]);
   const drift = [];
   for (const rel of [...keys].sort()) {
@@ -118,7 +129,9 @@ function doCheck() {
     }
     const now = sha256(rel);
     if (!(rel in baseline)) {
-      drift.push(`UNBASELINED  ${rel}  (matches a protected glob but is not in the baseline)`);
+      drift.push(
+        `UNBASELINED  ${rel}  (present but absent from the baseline — run --update if intentional)`,
+      );
     } else if (now !== baseline[rel]) {
       drift.push(`MODIFIED     ${rel}  (${baseline[rel].slice(0, 12)}… → ${now.slice(0, 12)}…)`);
     }

@@ -252,14 +252,23 @@ function canaryGuard() {
       );
     record('guard: baseline writes over the protected set', guard('--update').status === 0);
     record('guard: clean check passes on an untouched tree', guard().status === 0);
+
+    // MODIFIED: flip one byte in a guarded file, then restore it from REPO.
     const victim = join(dir, 'scripts', 'preflight.mjs');
     writeFileSync(victim, `${readFileSync(victim, 'utf8')}\n// canary tamper\n`);
-    const tampered = guard();
-    record(
-      'guard: BITES when a protected file is tampered',
-      tampered.status === 1,
-      `exit ${tampered.status}`,
-    );
+    record('guard: BITES on a MODIFIED protected file', guard().status === 1);
+    cpSync(join(REPO, 'scripts', 'preflight.mjs'), victim);
+
+    // UNBASELINED: add a file matching a protected glob but absent from the
+    // baseline, then remove it.
+    const intruder = join(dir, 'biome-plugins', 'zz-canary.grit');
+    writeFileSync(intruder, '// canary\n');
+    record('guard: BITES on an UNBASELINED glob match', guard().status === 1);
+    rmSync(intruder, { force: true });
+
+    // REMOVED: delete a guarded file (last case — no restore needed).
+    rmSync(join(dir, 'tools', 'scan_staged.py'), { force: true });
+    record('guard: BITES on a REMOVED protected file', guard().status === 1);
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }

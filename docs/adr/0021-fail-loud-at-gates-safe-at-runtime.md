@@ -53,9 +53,15 @@ land with this ADR:
   both the local preflight gate and the CI `checks` job, and is proven to bite
   by a new gate-canary case.
 - **Mutation provenance** — `scripts/mutation-probe.mjs` now requires every
-  mutant to name the unit suite meant to kill it (resolved via `FILE_TO_TEST`,
-  validated to exist) and prints that suite on SURVIVED. A new module with no
-  registered suite fails the probe loud, rather than silently lacking coverage.
+  mutant to name the unit suite meant to kill it (resolved via `FILE_TO_TEST`)
+  and prints that suite on SURVIVED. A new module with no registered suite fails
+  the probe loud, rather than silently lacking coverage. **Limitation, stated
+  honestly:** this is *existence-checked, not kill-attributed* — the validator
+  proves the named suite *exists*, not that it is the test that actually fails
+  on the mutant (the probe still runs the whole unit project per mutant, so a
+  KILL may come from an unrelated test). Machine-verified kill attribution
+  (parse the failing suite and assert it is the declared one) is a future
+  option; today the value is the forced, reviewed *pointer*, not a proof.
 
 **2. Runtime user-facing code degrades GRACEFULLY — but never silently.**
 Play-money UI code (storage, audio, render) must not crash on a recoverable
@@ -69,8 +75,18 @@ temp+rename+last-known-good.
 - The safety machinery can no longer be edited quietly; legitimate edits cost
   one `npm run guard -- --update` and a visible `.fileguard.json` diff. That
   friction is the feature.
-- Adding a mutant now forces you to point at its killing test — provenance is a
-  gate, not a comment.
+- Adding a mutant now forces you to point at a killing test — an
+  existence-checked gate, not a comment (it does not yet attribute the kill to
+  the named suite; see the limitation above).
+- **Known CI interaction (dormant):** the drift audit (`audit.yml`) auto-commits
+  `biome check --write` fixes; `ci.yml`'s `npm run guard` step runs on the
+  resulting commit. If a future PR ever lands a *guarded* file slightly
+  unformatted, that auto-fix would reformat-and-commit it without re-snapshotting
+  `.fileguard.json`, and the guard would then fail on the bot commit. Dormant
+  today (all guarded files are biome-clean; the only auto-commit here touched
+  `docs/audit-history.ndjson`, which is unguarded). If it ever fires, the fix is
+  to re-baseline in the same PR — which is exactly the guard doing its job
+  (an unreviewed change to safety code), just inconveniently late.
 - **Flagged, not fixed (design-only, this ADR's scope):** `src/lib/storage.ts`
   is today the *correct* shape of half 2 (it degrades on miss/corrupt/quota/
   private-mode instead of throwing) but the *wrong* loudness — all three catches

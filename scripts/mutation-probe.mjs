@@ -291,6 +291,12 @@ const MUTATIONS = [
 // gone missing — is a blind spot waiting to happen, so it fails LOUD here
 // rather than riding as quiet green. New module ⇒ register its test below
 // (or set a per-mutant `kills` override) ⇒ you are forced to point at a test.
+//
+// LIMITATION (stated honestly): this is EXISTENCE-checked, not kill-attributed
+// — it proves the named suite *exists*, not that it is the test that actually
+// fails on this mutant (the probe runs the whole unit project per mutant, so a
+// KILL may come from an unrelated test). Machine-verified kill attribution is a
+// future option; see ADR-0021.
 const FILE_TO_TEST = {
   'src/lib/reels/reel-math.ts': 'test/unit/reel-math.test.ts',
   'src/lib/storage.ts': 'test/unit/storage.test.ts',
