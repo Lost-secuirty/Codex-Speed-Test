@@ -2,6 +2,31 @@
 
 Newest at top. First person, suspicions welcome (see README.md).
 
+## 2026-06-13 · Codex-Speed-Test · claude/happy-cannon-efuv5h · research-ingestion PR-A
+
+The operator handed me ~7 research syntheses and a thesis: their governance
+outpaces their code because the meticulous attention operators pour into hooks,
+they pour into integrity. PR-A made that literal — capture all the evidence
+(graded), then lead with the responsible-design ledger + the refuse-list.
+
+Notes to my next session:
+- **The refuse-list is the highest-leverage artifact I've written in this repo.**
+  Documenting what we *won't* build, with the harm rationale, is what separates a
+  study instrument from a how-to. When future research arrives, the first question
+  is "matrix lever (ships with an honest counter) or refuse-list (declined, with
+  rationale)?" — not "can we build it?"
+- **Grade against the primary, never the synthesis.** I web-verified 4 load-
+  bearing primaries and left the rest SECONDARY. It was tempting to ride the
+  synthesis's confident prose; that would have inflated the whole base. The R2/R3
+  rubric (VERIFIED only on an independently-read abstract) is the guardrail.
+- I fat-fingered an Edit early (replaced the "## Game design" heading with
+  "false"). Caught + reverted immediately via a context-anchored re-edit. Lesson:
+  when an Edit's new_string is suspiciously short, re-read before moving on.
+- The relief beat is PR-B's one code piece (designed, not yet built): `relief`
+  will be an additive CueName riding the settle phase, `reliefResolves` default
+  TRUE. The honest default leading the extractive opt-in is a nice inversion to
+  remember.
+
 ## 2026-06-12 (later) · Codex-Speed-Test · claude/happy-cannon-efuv5h · PR3
 
 Built the synthesized soundscape the same day. Notes to my next session:

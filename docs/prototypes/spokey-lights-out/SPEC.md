@@ -56,6 +56,18 @@ losses-disguised-as-wins — the real-floor psychology, replicated for a craft
 study. De-extractive levers ship as documented toggles (`nearMiss`, `ldwHonest`,
 stop-button), so the prototype can demonstrate *both* sides of the research.
 
+## Responsible design (ADR-0019)
+
+Every extractive lever above is a *study* of the mechanism, never a delivery
+vehicle: it ships beside an honest counter-toggle, every mechanism is legible,
+and the hard no-stakes line (ADR-0001) never moves. The full ledger — the lever
+matrix, the **safety-frame doctrine**, and the **refuse-list** (the levers this
+repo studies but deliberately will *not* build: the Machine-Zone trance loop,
+loss-chasing reinforcement, per-player tuning, covert player measurement,
+typology targeting) — lives in
+[`RESPONSIBLE-DESIGN.md`](RESPONSIBLE-DESIGN.md). The evidence behind it is
+[`EVIDENCE.md`](EVIDENCE.md) § R3.
+
 ## Look — diegetic dark cabinet
 
 Rusted vector cabinet chrome (a machine you sit at, not darkness instead of a

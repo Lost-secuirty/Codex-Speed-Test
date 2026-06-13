@@ -24,6 +24,14 @@ session (2026-06-12). Grades: **VERIFIED** (read it / its abstract), **SECONDARY
 > "R2-corrected"), and no design decision contradicted. The round-2 record is
 > at the bottom of this file.
 
+> **Round 3 (2026-06-13, the research-ingestion arc):** the operator supplied
+> seven research syntheses; this pass folds their mechanisms in as graded claims
+> (the four new § sections below) and upgrades held rows where a primary now
+> verifies. Honesty rule held: the docs are *syntheses*, so a claim is graded
+> SECONDARY (synthesis-sourced) unless a primary abstract was independently
+> read this round — four were (punishment-insensitivity, near-miss↔SOGS,
+> excitation-transfer, the Machine Zone). The R3 record is at the bottom.
+
 ## Game design
 
 | Claim (→ where it lands) | Source | Grade |
@@ -45,7 +53,7 @@ session (2026-06-12). Grades: **VERIFIED** (read it / its abstract), **SECONDARY
 | Suspense = a prediction state from instability/uncertainty | Lehne & Koelsch 2015, *Frontiers in Psychology* ("Toward a general psychological model of tension and suspense") | SECONDARY → VERIFIED (abstract, R2) |
 | Recreational fear is an **inverted-U** (too little = boring) → restraint frames peaks | Andersen, Schjoedt, Clasen et al. 2020, *Psychological Science* "Playing With Fear" (Aarhus haunted house, N=110) | SECONDARY → VERIFIED (abstract, R2) |
 | Amygdala response **decrements** with repetition → "one pair of eyes, not twenty" | Plichta et al. 2014, *NeuroImage* | VERIFIED (abstract) |
-| Implied > shown monster; creeping dread ≠ startle | Martin 2019, *Frontiers in Psychology* 10:2298 (R2: the review is real and confirmed; the specific implied>shown sub-claim is section-level and stayed unread — honest hold) | SECONDARY (held, R2) |
+| Implied > shown monster; creeping dread ≠ startle | Martin 2019, *Frontiers in Psychology* 10:2298 (R2: review real, implied>shown sub-claim stayed unread; R3: excitation-transfer + threat-simulation corroborate the *direction* — anticipation maximises transfer — but the Martin-specific sub-claim still unread) | SECONDARY (held, R2/R3) |
 
 ## Player UX
 
@@ -65,11 +73,56 @@ session (2026-06-12). Grades: **VERIFIED** (read it / its abstract), **SECONDARY
 | --- | --- | --- |
 | Sensory dissonance/roughness peaks ~¼ critical band (the unease lever) | Plomp & Levelt 1965, *JASA* 38:548–560 (R2: confirmed; open PDF exists at mpi.nl); Zwicker & Fastl | SECONDARY → VERIFIED (abstract, R2) |
 | Nonlinear/chaotic roughness = scream signature, mimicked by scary music | Trevor, Arnal & Frühholz 2020, *JASA* 147(6):EL540 (**R2-corrected** — round 1 misattributed to "Trevino/Blumstein"; Blumstein's related work is the 2010 *Biology Letters* nonlinear-soundtracks paper) | SECONDARY → VERIFIED (abstract, R2) |
-| Slow-onset drones engage sustained anxiety (BNST), not phasic startle | startle-reflex literature (R2: no single primary BNST-drone source surfaced — honest hold; the rise-time half is now verified below) | SECONDARY (held, R2) |
+| Slow-onset drones engage sustained anxiety (BNST), not phasic startle | startle-reflex literature (R2: no single primary BNST-drone source; R3: the parallel mechanism — sustained negative-reinforcement / affect-regulation, the Machine Zone, VERIFIED — is now sourced, but the specific BNST-drone attribution stays unverified) | SECONDARY (held, R2/R3) |
 | Startle is gated by **rise-time** → **≥120ms attack** rule | Blumenthal 1986, *Psychophysiology* (R2: startle declines as rise-time grows; full mitigation needs ~141–220ms, so ≥120ms is sound and slightly conservative — note 140ms+ as the fully-no-startle floor) | SECONDARY → VERIFIED (abstract, R2) |
-| Shepard endless-rise = unresolved tension (→ figure-proximity cue) | Shepard 1964 (R2: the *anxiety* half is craft-corroborated — Zimmer’s *Dunkirk* Shepard-scale, "legitimate anxiety" — but no controlled study surfaced) | VERIFIED (illusion) / SECONDARY (anxiety, held R2) |
+| Shepard endless-rise = unresolved tension (→ figure-proximity cue; **the relief beat resolves it**, PR-B) | Shepard 1964 (R2: anxiety half craft-corroborated only; R3: the *mechanism* — unresolved arousal stays trapped in negative affect, excitation-transfer/Zillmann, VERIFIED — is now sourced; a Shepard-specific anxiety study still didn't surface) | VERIFIED (illusion) / SECONDARY (anxiety, held R2/R3) |
 | Missing fundamental gives felt low-end on small speakers (replaces infrasound) | virtual-pitch perception | VERIFIED (perception) |
 | **The 19Hz "fear frequency" is a myth** — single unreplicated anecdote; use missing fundamental instead | Tandy & Lawrence 1998 + skeptical replications; MacEwan 2026 found only subtle effects requiring a high-SPL subwoofer | MYTH (rejected) |
+
+## Addiction & persistence (R3)
+
+Why people keep going back to what hurts them — the mechanism layer behind the
+extractive levers. Load-bearing for the refuse-list (RESPONSIBLE-DESIGN.md) and
+ADR-0019/0020, not for any shipped lever.
+
+| Claim (→ where it lands) | Source | Grade |
+| --- | --- | --- |
+| **Punishment insensitivity = a failure of *instrumental contingency learning*, NOT numbness.** Insensitive subjects disliked the aversive outcome *equally* (Pavlovian fear intact) but failed to encode the action→punisher link, so they couldn't withhold the punished behaviour. The humane reframe: people feel the loss fully; the wiring that turns suffering into "change the choice" is what breaks. (→ ADR-0019 doctrine; the refuse-list's harm model) | Jean-Richard-dit-Bressel, Killcross & McNally, eLife 2021 (PMC8177883) + eLife 2018 9:e52765 ("impaired contingency detection, not aversion insensitivity or reward dominance") | VERIFIED (abstract) |
+| Gambling **severity** (SOGS) predicts the dopaminergic-midbrain response to **near-misses** specifically — and is *not* associated with the response to actual wins | Chase & Clark 2010, *J. Neurosci.* 30(18):6180 (fMRI, n=20) | VERIFIED (abstract) |
+| **The Machine Zone:** machine gambling pulls players into a dissociative trance; once in "the zone" they play *not to win but to keep playing* — affect-regulation / negative reinforcement, the money is the cover story. Addiction framed as human–machine interaction, the machine engineered for "continuous productivity." (→ the #1 declined lever; ADR-0020's anti-thesis) | Schüll, *Addiction by Design* (Princeton 2012), 15-yr Las Vegas ethnography | VERIFIED (book) |
+| Loss chasing = compulsion to recover losses by escalating wagers after a loss (no stop-loss); the loss's pain flips from brake to accelerant under weakened prefrontal control | synthesis (cites neuroeconomics + reversal-learning literature, PMC3249486) | SECONDARY |
+| Reversal-learning collapse / D2 down-regulation: addicted brains can't overwrite an ingrained "action = reward" rule when contingencies flip; variable-ratio exposure blunts D2 sensitivity → escalation | synthesis (cites frontocorticostriatal reversal-learning work) | SECONDARY |
+
+## Individual differences (R3)
+
+Who is most exposed — documented to *understand vulnerability*, explicitly NOT
+to target it (that targeting is on the refuse-list).
+
+| Claim | Source | Grade |
+| --- | --- | --- |
+| **Sensation seeking** (Zuckerman, 4 dims: thrill/experience/disinhibition/boredom-susceptibility) predicts BOTH a preference for horror/intense media AND substance-use vulnerability — a shared psychometric root (demand for intense input) | synthesis (Zuckerman SSS; foundational, not independently re-read this round) | SECONDARY |
+| **Reward Deficiency Syndrome:** chronic hypodopaminergia (DRD2/Taq1A → lower striatal D2 density) → everyday rewards under-satisfy → biological pull toward high-arousal/risky stimuli; if steered off chemicals, the drive may channel into horror/extreme recreation instead | synthesis (Blum; RDS is a *contested* construct — graded accordingly) | SECONDARY (contested) |
+
+## Recreational fear & the safety frame (R3)
+
+The horror-side mechanism — and the exact line that makes a no-stakes horror
+study instrument *responsible*. This section is the evidentiary spine of
+RESPONSIBLE-DESIGN.md's safety-frame doctrine and of the relief beat (PR-B).
+
+| Claim (→ where it lands) | Source | Grade |
+| --- | --- | --- |
+| **Excitation-transfer:** sympathetic arousal outlasts the cognitive appraisal that caused it, so residual fear-arousal *transfers* to the relief when the threat resolves — amplifying it. **Resolved/"happy" endings maximise the payoff;** unresolved endings leave arousal trapped in negative affect. (→ the relief beat: the Shepard resolves, a relief cue lands — `reliefResolves` default TRUE) | Zillmann, Excitation-Transfer Theory (1971+); rev. e.g. *Communication Research* 2017 44(1):29–53 | VERIFIED (abstract) |
+| **The safety frame:** the entire neurochemical reward of horror is predicated on the PFC holding meta-awareness that the threat is simulated; collapse the frame (real danger) and excitation-transfer fails, coding the event as trauma. Horror fans retain *intact* instrumental contingency learning — they know the boundary. (→ the doctrine: no money + intact safety frame = study, not trap) | synthesis (recreational-fear / threat-simulation literature; Clasen/Andersen/Scrivner) | SECONDARY |
+| **Benign masochism** (Rozin): learned hedonic reversal — pleasure from safely "tricking" ancient survival instincts (chili, horror); uniquely human | synthesis (Rozin; PubMed 35583224) | SECONDARY |
+| Horror **viewer typologies** (gore / thrill / independent / white-knuckler) differ by empathy × sensation-seeking × distress-tolerance → no single audience; high-empathy "emotional contagion" viewers avoid gore | synthesis (Clasen/Scrivner morbid-minds typology) | SECONDARY |
+| Horror as **self-directed exposure therapy:** externalise anxiety onto a fictional monster, feel the dread in a controlled frame, process it when it ends — emerging support for anxiety/depression | synthesis (recreational-fear/depression work, e.g. PMC12212089) | SECONDARY (emerging) |
+
+## Market & popularity (R3)
+
+| Claim | Source | Grade |
+| --- | --- | --- |
+| Gambling is **not** uniformly "recession-proof": casino/EGM spend is pro-cyclical (falls in downturns) while **lottery/scratch is recession-resistant and rises with personal financial hardship** (Iceland 2008 longitudinal: past-year gambling +10.7pp 2007→2011, driven by lotto/scratch; EGM the only type to fall) | synthesis (Icelandic longitudinal + US/Sweden/Ireland corroboration) | SECONDARY |
+| Hold&win is the top-earning mechanic family (premium-leased) — see Game design row (EKG/GGB) | EKG GPR May 2024 via GGB | VERIFIED (trade-press) |
 
 ## Build feasibility (engineering evidence)
 
@@ -138,3 +191,38 @@ independent hosts (PubMed, Frontiers, Sage, JASA, GREO, NN/g, GGB) — enough fo
   the granular Eilers & Krejcik mechanic-preference tables stay subscriber-
   paywalled, and dark/horror-slot "popularity" is affiliate-marketing LORE
   (directional only, not citable).
+
+## Round 3 — research ingestion (2026-06-13)
+
+The operator supplied seven research syntheses; this pass turns the
+psychology/market layer into graded claims so none of it is wasted. Four new §
+sections (Addiction & persistence; Individual differences; Recreational fear &
+the safety frame; Market & popularity) and three held rows updated.
+
+**Method honesty (unchanged rubric):** the docs are *syntheses of* primary
+work, so a claim is SECONDARY unless its primary abstract was independently read
+this round. **Four were independently verified** and graded VERIFIED:
+
+- **Punishment insensitivity = failure of instrumental contingency learning**
+  (eLife 2021 PMC8177883; eLife 2018 e52765) — the load-bearing humane reframe:
+  felt pain is intact, the action→harm mapping is the deficit. Anchors ADR-0019
+  and the refuse-list's harm model.
+- **Near-miss ↔ SOGS severity** (Chase & Clark 2010, *J. Neurosci.* 30:6180) —
+  midbrain near-miss response scales with gambling severity, win response does
+  not. Strengthens the `nearMiss` A/B's importance.
+- **Excitation-transfer** (Zillmann) — resolved endings maximise the relief
+  payoff; unresolved leaves arousal trapped. Directly justifies the relief beat
+  (PR-B) and upgrades the Shepard-anxiety *mechanism*.
+- **The Machine Zone** (Schüll, *Addiction by Design* 2012) — the dissociative
+  "play not to win but to keep playing" trance. Anchors ADR-0020's anti-thesis
+  (horror resists the zone) and the #1 declined lever.
+
+**Graded SECONDARY (synthesis-sourced, honest):** loss-chasing, reversal-
+learning collapse, sensation-seeking (Zuckerman), Reward Deficiency Syndrome
+(noted *contested*), the safety frame, benign masochism, horror typologies,
+horror-as-exposure-therapy, recession/lottery-vs-EGM market data.
+
+**No design decision was contradicted.** The research's main *additive* effect
+is the new responsible-design artifacts (RESPONSIBLE-DESIGN.md, ADR-0019/0020)
+and one evidence-backed lever (the relief beat) — plus the explicit refuse-list
+of levers the same research describes that this repo will **not** build.
