@@ -7,6 +7,25 @@ evergreen rules into `GOLDEN_RULES.md` via a Scott-reviewed PR.
 
 ## 2026-06-12
 
+- **Cross-repo port from demo-math #28 (Scott's separate session there).**
+  Two of its findings applied here verbatim: (1) **no workflow had a
+  `concurrency` group** — our audit.yml pushes auto-fix commits, so two racing
+  runs on one ref could both push (we'd been rebasing around bot commits all
+  day); per-ref groups added to audit/ci/scan (cancel-in-progress) and
+  visual-baseline (serialize, never cancel — it pushes commits). (2) **rules
+  that live only in CLAUDE.md are invisible to non-Claude agents** — directly
+  relevant since docs/kb plans for multi-agent use; CLAUDE.md now carries the
+  "filename is historical, read regardless of tool" banner and the
+  read-your-own-journal rule moved into AGENTS.md § Knowledge base. Noted for
+  later, not ported: demo-math's controls auditor (`control-policy.json` +
+  `tools/control_audit.py` — presence-verification of the control set, the
+  complement to our gate canary's bite-verification) and its LEARNINGS→archive
+  distill pattern (#29; we trigger that at the ~500-line nag). Convergence
+  spotted: its #30 "planted" smoke script is our gate-canary idea independently
+  arrived at. Thematic note: demo-math #23 built a Spokey horror theme on the
+  MATH side — the two repos now hold the two halves of the same game, exactly
+  per the founding split.
+
 - **SPOKEY PR3 meta-audit — 4 HIGH found pre-push, all folded in.** The audit
   rhythm caught real semantic rot a third time:
   (1) **Biome reformat orphaned a mutant mid-build** — formatting `cues.ts`

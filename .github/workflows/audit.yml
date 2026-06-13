@@ -10,6 +10,12 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
+# Two racing runs on one ref can collide (the audit pushes auto-fix
+# commits) — serialize per ref (ported from demo-math PR #28).
+concurrency:
+  group: audit-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: write # push safe auto-fixes back to the PR branch
   pull-requests: write # post the audit report comment

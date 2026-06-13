@@ -1,9 +1,12 @@
 # CLAUDE.md
 
-Auto-loaded for Claude Code. **Read [`AGENTS.md`](AGENTS.md) first — it is the
-canonical contract** (purpose, commands, boundaries, the auto-mode Working
-Agreement). Distilled version: [`GOLDEN_RULES.md`](GOLDEN_RULES.md). This file
-adds only the Claude-specific bits.
+**The filename is historical — read this no matter which agent you are.**
+Non-Claude agents skip files named for other tools and lose the rules inside
+(the gap demo-math closed in its PR #28); everything here applies to every
+human, agent, and automation in this repo. Read [`AGENTS.md`](AGENTS.md)
+first — it is the canonical contract (purpose, commands, boundaries, the
+auto-mode Working Agreement). Distilled version:
+[`GOLDEN_RULES.md`](GOLDEN_RULES.md).
 
 ## Auto mode (this repo's defining trait)
 

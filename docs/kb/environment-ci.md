@@ -35,6 +35,12 @@ browser gates; the container substitutes a pre-provisioned Chromium.
   [claude · 2026-06-12 · VERIFIED]
 - **npm registry IS reachable** (installs fine); pin actions by peeled SHA
   from `git ls-remote --tags`. [claude · 2026-06-12 · VERIFIED]
+- **Workflows that PUSH commits need per-ref `concurrency` groups** — two
+  racing audit runs on one ref can both push auto-fix commits (demo-math hit
+  this; its PR #28 is the fix we ported). `cancel-in-progress: true` for
+  read-only/restartable jobs, **false** for jobs mid-push (visual-baseline) —
+  a cancelled half-push is worse than a queue.
+  [claude · 2026-06-12 · VERIFIED (in demo-math; ported here)]
 
 ## Footguns
 
