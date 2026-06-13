@@ -211,6 +211,18 @@ function canaryScanner() {
     res.status === 0,
     (res.stdout || '').trim().split('\n').at(-1) || `exit ${res.status}`,
   );
+  // bad-base refusal: --ci on an unresolvable ref must exit 2, never scan an
+  // empty range and report green (the silent empty-range class, ADR-0007).
+  const badBase = spawnSync(
+    'python3',
+    ['tools/scan_staged.py', '--ci', '--base', 'canary-no-such-ref'],
+    { cwd: REPO, encoding: 'utf8' },
+  );
+  record(
+    'scanner: refuses unresolvable base ref (exit 2)',
+    badBase.status === 2,
+    `exit ${badBase.status}`,
+  );
 }
 
 // ---------------------------------------------------------------------

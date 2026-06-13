@@ -102,6 +102,19 @@ def _git(args: list[str]) -> str:
     return out.stdout
 
 
+def _ref_exists(ref: str) -> bool:
+    """True iff `ref` resolves to a commit. Guards --ci against an invalid/missing
+    base ref producing no diff and a silent empty-range green — the same class
+    already closed in scripts/audit-drift.mjs (ensureRef)."""
+    out = subprocess.run(
+        ["git", "rev-parse", "--verify", "--quiet", f"{ref}^{{commit}}"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    return out.returncode == 0 and bool(out.stdout.strip())
+
+
 def _changed_paths(diff_args: list[str]) -> list[str]:
     return [p for p in _git(["diff", "--name-only"] + diff_args).splitlines() if p]
 
@@ -216,6 +229,12 @@ def main() -> int:
     if a.ci:
         if not a.base:
             print("--ci requires --base REF", file=sys.stderr)
+            return 2
+        if not _ref_exists(a.base):
+            print(
+                f"scan: cannot resolve base ref '{a.base}' — refusing to report on an empty diff.",
+                file=sys.stderr,
+            )
             return 2
         return _scan([f"{a.base}...HEAD"])
     return _scan(["--cached"])  # default: staged
