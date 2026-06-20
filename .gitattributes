@@ -1,3 +1,9 @@
+# Normalize all text files to LF in the repo and on checkout. Without this, a
+# Windows checkout (core.autocrlf=true) gets CRLF working-tree bytes, which makes
+# the content-addressed file-guard and biome report false drift locally — the LF
+# baseline is what CI computes. This makes the gates runnable correctly on any OS.
+* text=auto eol=lf
+
 # Append-only audit log: union-merge kills tail conflicts (ADR-0007).
 docs/audit-history.ndjson merge=union
 # Visual-regression baselines are binary.
