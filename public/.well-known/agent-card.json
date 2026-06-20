@@ -1,0 +1,31 @@
+{
+  "name": "codex-speed-test-gates",
+  "description": "Static A2A discovery card for the deterministic, no-LLM verification gate set of Codex-Speed-Test (a public frontend-prototyping repo: UI/sound/animation on placeholder outcomes, NO slot math, no real money). NO LIVE A2A ENDPOINT YET: this is a phase-A discovery card; the `url` points to the project repository, not a live JSON-RPC A2A endpoint (none exists in phase A). The skill below describes this repo's OWN self-verification machinery (it verifies this repo's prototypes), not a hosted service that runs on external code. See STATUS.md and docs/adr/0023-agent-interop-static-surface.md.",
+  "version": "0.1.0",
+  "url": "https://github.com/Lost-secuirty/Codex-Speed-Test",
+  "documentationUrl": "https://github.com/Lost-secuirty/Codex-Speed-Test/blob/main/STATUS.md",
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false
+  },
+  "defaultInputModes": ["application/json"],
+  "defaultOutputModes": ["application/json"],
+  "securitySchemes": {},
+  "skills": [
+    {
+      "id": "gate-verify",
+      "name": "Verify (deterministic preflight gate set)",
+      "description": "Run this repo's deterministic, no-LLM preflight gate set — lint, typecheck, unit, mutation, determinism, gate-canary (do the gates still bite?), file-guard (safety-machinery freeze), build, browser visual-regression, smoke, and a strict drift-audit — failing loud on any regression. This describes the repo's OWN self-verification machinery: it verifies this repo's frontend prototypes; it is NOT a hosted service that runs on external code. Implemented by scripts/preflight.mjs (npm run preflight).",
+      "tags": ["verification", "deterministic", "no-llm", "ci-gates", "self-check"],
+      "inputModes": ["application/json"],
+      "outputModes": ["application/json"]
+    }
+  ],
+  "x-lifecycle": {
+    "status": "growing",
+    "frozen": false,
+    "interopPhase": "A",
+    "liveEndpoint": false,
+    "note": "Growing until explicitly frozen (see STATUS.md). Phase A is a static discovery card only: no live A2A/MCP endpoint and no authentication. A live endpoint plus machine-to-machine auth is deferred (phase B). This card describes existing self-verification machinery; it makes no claim to run on external code."
+  }
+}

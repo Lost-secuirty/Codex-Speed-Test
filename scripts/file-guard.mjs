@@ -46,6 +46,7 @@ const PROTECTED_FILES = [
   'scripts/determinism.mjs',
   'scripts/preflight.mjs',
   'scripts/file-guard.mjs',
+  'scripts/agent-card-validate.mjs',
   'verify.mjs',
   'biome.json',
   'vite.config.ts',
