@@ -24,7 +24,7 @@ A repo is just: *what fills each slot, and what was deliberately dropped (with a
 
 | Repo | Role | Facing |
 |---|---|---|
-| **codex-speed-test** | **Private testing ground for rollout** — where techniques are proven before they go anywhere else. Highest-water-mark governance + verification; the reference repo. | private |
+| **codex-speed-test** | **Testing ground for rollout** — where techniques are proven before they go anywhere else. Highest-water-mark governance + verification; the reference repo. | public |
 | **demo-math-slot-test-only** | **Front-facing: prove the slot math** — public RTP/RNG verification; the "show the math is honest" repo. | public |
 | **testing-kits** | **Portable test library** — proof harnesses meant to be ported / referenced later for whatever a future project needs. | reference |
 | **lostsouls-game** | **Co-designed game (Scott + son)** — fun first; a learning vehicle for both of them. Light *by design* — don't over-engineer it. | personal |

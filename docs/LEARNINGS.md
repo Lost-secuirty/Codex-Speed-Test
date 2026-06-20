@@ -184,7 +184,10 @@ condensed (full detail + evidence in the archive / the linked ADR / `docs/kb`):
   uses Chrome-for-Testing 148, so local↔CI rasterization can differ). Audio tests
   RENDER via OfflineAudioContext and assert metric tolerances, never golden
   buffers (`docs/kb/webaudio.md`).
-- **CodeQL + Dependency Review are `workflow_dispatch`-only** — GHAS isn't on this
-  private repo; a check that can never pass is worse than absent (alarm fatigue).
+- **CodeQL + Dependency Review are `workflow_dispatch`-only (for now)** — at
+  scaffold time GHAS wasn't on this then-private repo; a check that can never
+  pass is worse than absent (alarm fatigue). The repo is now public (`STATUS.md`)
+  where both run free, so the premise flipped — auto-runs can be re-enabled in a
+  follow-up PR (verify green, then add to branch protection).
 - **Tool facts → `docs/kb`; project gotchas stay here** — distill tool-facts out
   of this log into the matching kb sheet and link back.

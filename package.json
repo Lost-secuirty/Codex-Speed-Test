@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "Private slot-frontend prototyping playground — UI, sound, juice. The math lives in Demo-math-slot-test-only.",
+  "description": "Public slot-frontend prototyping playground — UI, sound, juice. The math lives in Demo-math-slot-test-only.",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
