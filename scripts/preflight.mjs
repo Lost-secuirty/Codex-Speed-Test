@@ -69,6 +69,7 @@ ok = run('mutation', 'npm', ['run', 'mutation']) && ok;
 ok = run('determinism', 'npm', ['run', 'determinism']) && ok;
 ok = run('gate canary', 'npm', ['run', 'canary']) && ok;
 ok = run('file guard', 'npm', ['run', 'guard']) && ok;
+ok = run('agent card', 'npm', ['run', 'agent-card']) && ok;
 
 const chromium = resolveChromium();
 if (chromium) {

@@ -21,6 +21,7 @@
     "canary": "node scripts/gate-canary.mjs",
     "determinism": "node scripts/determinism.mjs",
     "guard": "node scripts/file-guard.mjs",
+    "agent-card": "node scripts/agent-card-validate.mjs",
     "audit": "node scripts/audit-drift.mjs",
     "smoke": "node verify.mjs",
     "preflight": "node scripts/preflight.mjs"

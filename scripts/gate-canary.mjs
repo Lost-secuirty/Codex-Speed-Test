@@ -42,6 +42,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import pixelmatch from 'pixelmatch';
 import { PNG } from 'pngjs';
+import { parsePhase, validateAgentSurface } from './agent-card-validate.mjs';
 
 const REPO = process.cwd();
 const results = [];
@@ -347,6 +348,33 @@ function canaryDeterminism() {
 }
 
 // ---------------------------------------------------------------------
+// agent-card — the no-overclaim honesty gate (ADR-0023). The real surface
+// must validate; an overclaiming or broken card must FAIL. The gate's real
+// tool is validateAgentSurface() (imported), so running it on known-bad
+// fixtures proves it still bites — a string is not an AST, so this is safe.
+// ---------------------------------------------------------------------
+function canaryAgentCard() {
+  const card = JSON.parse(readFileSync(join(REPO, 'public/.well-known/agent-card.json'), 'utf8'));
+  const tools = JSON.parse(readFileSync(join(REPO, 'tools/mcp/tools.json'), 'utf8'));
+  const phase = parsePhase(readFileSync(join(REPO, 'STATUS.md'), 'utf8'));
+  record('agent-card: real surface validates', validateAgentSurface({ card, tools, phase }).ok);
+
+  const overclaim = structuredClone(card);
+  overclaim['x-lifecycle'].liveEndpoint = true;
+  record(
+    'agent-card: BITES on a live-endpoint overclaim (phase A)',
+    !validateAgentSurface({ card: overclaim, tools, phase }).ok,
+  );
+
+  const broken = structuredClone(card);
+  broken.skills = [];
+  record(
+    'agent-card: BITES on a missing required A2A field',
+    !validateAgentSurface({ card: broken, tools, phase }).ok,
+  );
+}
+
+// ---------------------------------------------------------------------
 console.log('GATE CANARY — proving every gate still fails on known-bad input\n');
 canaryLint();
 canaryTypecheck();
@@ -355,6 +383,7 @@ canaryAudit();
 canaryScanner();
 canaryGuard();
 canaryDeterminism();
+canaryAgentCard();
 
 const failed = results.filter((r) => !r.pass);
 console.log(`\n--- SUMMARY: ${results.length - failed.length}/${results.length} canaries pass ---`);

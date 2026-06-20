@@ -38,6 +38,7 @@ jobs:
       - run: npm run determinism
       - run: npm run canary
       - run: npm run guard
+      - run: npm run agent-card
       - run: npm run build
       - name: Upload build
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

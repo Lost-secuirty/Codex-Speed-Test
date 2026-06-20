@@ -1,0 +1,52 @@
+{
+  "$comment": "Static MCP tool definitions for this repo's deterministic verification gate set. Phase A: there is NO live MCP server (see docs/adr/0023-agent-interop-static-surface.md). The tool maps to scripts/preflight.mjs; the output schema mirrors that script's real per-gate record(name, status, note) shape. This describes the repo's OWN self-verification, not a service for external code.",
+  "mcpVersion": "2025-06-18",
+  "tools": [
+    {
+      "name": "gate_verify",
+      "title": "Verify (deterministic preflight gate set)",
+      "description": "Run this repo's deterministic, no-LLM preflight gate set (lint, typecheck, unit, mutation, determinism, gate-canary, file-guard, build, browser visual-regression, smoke, strict drift-audit) and return per-gate pass/fail. Fails loud on any regression. Verifies this repo's own prototypes; not a hosted service for external code. Wraps scripts/preflight.mjs.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "gates": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Optional subset of gate names to run (e.g. [\"lint\", \"unit\"]). Omit to run the full set in preflight order."
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "description": "Mirrors scripts/preflight.mjs's record(name, status, note) results plus an overall pass flag.",
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "description": "True only if every non-skipped gate passed."
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Gate name (e.g. lint, typecheck, gate canary, file guard, smoke)."
+                },
+                "status": {
+                  "type": "string",
+                  "enum": ["PASS", "FAIL", "SKIPPED(env)"],
+                  "description": "SKIPPED(env) is used only for browser/smoke when no Chromium is available (recorded in the PR body, verified in CI)."
+                },
+                "note": { "type": "string" }
+              },
+              "required": ["name", "status"]
+            }
+          }
+        },
+        "required": ["ok", "results"]
+      }
+    }
+  ]
+}
