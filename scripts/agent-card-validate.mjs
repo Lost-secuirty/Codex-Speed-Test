@@ -24,11 +24,14 @@ function isKebabCase(s) {
 }
 
 // Read `agent_interop_phase` from STATUS.md's YAML front-matter without a YAML dependency.
+// Strip surrounding quotes so a quoted value (`agent_interop_phase: "A"`) still parses to `A` —
+// otherwise the honesty checks (which key off `phase === 'A'`) would silently skip and let an
+// overclaiming card through.
 export function parsePhase(statusText) {
   const fm = statusText.match(/^---\n([\s\S]*?)\n---/);
   const block = fm ? fm[1] : statusText;
   const m = block.match(/^agent_interop_phase:\s*(\S+)\s*$/m);
-  return m ? m[1] : null;
+  return m ? m[1].replace(/['"]/g, '') : null;
 }
 
 // Returns { ok, errors } — never throws, so the canary can assert on every shape.
