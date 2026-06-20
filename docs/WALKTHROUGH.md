@@ -1,8 +1,8 @@
 # Codex-Speed-Test — Walk-Through
-*A private workshop for building slot-game screens fast — where the safety checks are themselves checked. · 2026-06-13*
+*A public workshop for building slot-game screens fast — where the safety checks are themselves checked. · 2026-06-13*
 
 ## Bottom line
-Codex-Speed-Test is a private repo for quickly prototyping the **front end** of slot games — the look, the sound, the animation "juice" — using fake placeholder outcomes. There is no slot math, no real money, and no wagering here (the math lives in a separate repo). Its real point isn't the games: it's the **verification machinery** that proves the automated checks still work, and it serves as the highest-standard reference that the operator's other repos copy from before any technique is rolled out.
+Codex-Speed-Test is a public repo for quickly prototyping the **front end** of slot games — the look, the sound, the animation "juice" — using fake placeholder outcomes. There is no slot math, no real money, and no wagering here (the math lives in a separate repo). Its real point isn't the games: it's the **verification machinery** that proves the automated checks still work, and it serves as the highest-standard reference that the operator's other repos copy from before any technique is rolled out.
 
 ## In plain terms (if you read nothing else)
 
@@ -20,9 +20,9 @@ The reason it's this strict: it's the operator's **proving ground**. Techniques 
 
 ### (1) What it is & why it exists (its role)
 
-**Plain:** A private sandbox for making slot-game screens quickly, and — more importantly — the operator's strictest reference repo. New verification ideas are proven here first, then copied outward to the other repos. It deliberately holds no gambling math and no money.
+**Plain:** A public sandbox for making slot-game screens quickly, and — more importantly — the operator's strictest reference repo. New verification ideas are proven here first, then copied outward to the other repos. It deliberately holds no gambling math and no money.
 
-**Technical:** A private, frontend-only prototyping repo, split from the public `Demo-math-slot-test-only` repo by **ADR-0001**: math (RTP models, RNG proofs, paytables, pluggable engines) stays public over there; UI/sound/animation prototypes live here on placeholder outcomes. `docs/REPO-TOPOLOGY.md` records the operator-set role verbatim — "Private testing ground for rollout … Highest-water-mark governance + verification; the reference repo" — and places it at the most-autonomous end of the autonomy↔human-gate axis. The contract is `AGENTS.md` (canonical), with `CLAUDE.md` pointing to it and `GOLDEN_RULES.md` as the cheat-sheet. No real money / wagering / payments appears anywhere; that boundary is restated in `AGENTS.md`, `SECURITY.md`, and `README.md`.
+**Technical:** A public, frontend-only prototyping repo (originally split out private under ADR-0001; opened up since — see `STATUS.md`), split from the public `Demo-math-slot-test-only` repo by **ADR-0001**: math (RTP models, RNG proofs, paytables, pluggable engines) stays public over there; UI/sound/animation prototypes live here on placeholder outcomes. `docs/REPO-TOPOLOGY.md` records the operator-set role verbatim — "Testing ground for rollout … Highest-water-mark governance + verification; the reference repo" — and places it at the most-autonomous end of the autonomy↔human-gate axis. The contract is `AGENTS.md` (canonical), with `CLAUDE.md` pointing to it and `GOLDEN_RULES.md` as the cheat-sheet. No real money / wagering / payments appears anywhere; that boundary is restated in `AGENTS.md`, `SECURITY.md`, and `README.md`.
 
 ### (2) How it's built
 

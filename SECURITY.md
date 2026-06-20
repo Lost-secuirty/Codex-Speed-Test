@@ -1,9 +1,9 @@
 # SECURITY.md — Codex-Speed-Test
 
-This is a **private** testing repo, but every rule below assumes it could
-become public by mistake — treat every commit, branch, and artifact as if it
-were public forever. It is a play-money frontend prototyping repo: no
-accounts, no payments, no real wagering, no personal data, no backend.
+This is a **public** testing repo (visibility: [`STATUS.md`](STATUS.md)) —
+treat every commit, branch, and artifact as public forever, because it is. It
+is a play-money frontend prototyping repo: no accounts, no payments, no real
+wagering, no personal data, no backend.
 
 ## The full-stop policy (binds every agent, every session)
 

@@ -35,3 +35,13 @@ dropped: no GitHub Pages / `deploy.yml`, no `DISCLAIMER.md`/`CHANGELOG.md`
   human gate is the opposite of this repo's auto mode.
 - **One private monorepo for everything** — rejected: the public demo repo
   already has history, CI, and an audience of one (Scott) happy with it.
+
+## Update (2026-06-20) — repo is now public
+
+This repo's **visibility has changed from private to public.** Current
+lifecycle/visibility is recorded authoritatively in [`STATUS.md`](../../STATUS.md);
+the "private" framing throughout this record is the historical context at the
+time of the decision and is left intact. **The frontend↔math split decided here
+still stands** — no slot math, real money, or wagering lives in this repo; the
+math remains in the public `Demo-math-slot-test-only` repo. Only the privacy
+constraint (and its dropped public-facing artifacts) is superseded by this update.

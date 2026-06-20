@@ -1,8 +1,12 @@
 # Codex-Speed-Test
 
-**Private** playground for fast prototyping of slot-game **frontends** — UI,
+**Public** playground for fast prototyping of slot-game **frontends** — UI,
 sound, animation, juice — and a live experiment in how far a long,
 autonomous, one-prompt agent build can go while staying correct.
+
+> **Growing, not frozen.** This repo keeps gaining prototypes, governance, and
+> machine-readable surfaces until explicitly frozen — see [`STATUS.md`](STATUS.md)
+> for the current lifecycle, visibility, and agent-interop phase.
 
 > The slot **math** (RTP models, RNG proofs, pluggable engines) lives in the
 > public `Demo-math-slot-test-only` repo and is deliberately NOT here

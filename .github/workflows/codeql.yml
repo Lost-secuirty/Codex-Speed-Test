@@ -1,9 +1,12 @@
-# MANUAL-ONLY (Scott's call, 2026-06-12 — see SETTINGS-CHECKLIST.md and
-# LEARNINGS): code-scanning upload requires GitHub Advanced Security on a
-# private repo, so automatic runs could never pass — a permanently red
-# check breeds alarm fatigue. The workflow stays installed and runnable;
-# to re-enable automatic scanning (repo goes public or GHAS is purchased),
-# restore the push/pull_request/schedule triggers below.
+# MANUAL-ONLY for now (was Scott's call, 2026-06-12 — see SETTINGS-CHECKLIST.md
+# and LEARNINGS): at scaffold time, code-scanning upload required GitHub
+# Advanced Security on a PRIVATE repo, so automatic runs could never pass — a
+# permanently red check breeds alarm fatigue. The repo is now PUBLIC
+# (STATUS.md), where CodeQL runs FREE, so that premise has flipped: re-enabling
+# automatic scanning is now available (its own follow-up PR — verify the first
+# run is green, then add to branch protection). Until then it stays installed
+# and runnable; to re-enable, restore the push/pull_request/schedule triggers
+# below.
 #
 #  on:
 #    push:
