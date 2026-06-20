@@ -27,3 +27,4 @@
 {"ts":"2026-06-13T20:03:58.423Z","base":"5e7fa9b625663db5c4c8cbf699f4c2ee25a0fdc3","head":"05ee058a8104bd76ef5e45b12682ff3cac9b5f8e","pr":15,"findings":[],"srcNet":0,"autofixed":false}
 {"ts":"2026-06-13T20:08:22.099Z","base":"5e7fa9b625663db5c4c8cbf699f4c2ee25a0fdc3","head":"ef125bdf905800bebab469f5c5af641b968d775f","pr":15,"findings":[],"srcNet":0,"autofixed":false}
 {"ts":"2026-06-13T20:39:54.334Z","base":"5e7fa9b625663db5c4c8cbf699f4c2ee25a0fdc3","head":"e10c02487163830ddafd3b77433d1e7f79e6df98","pr":15,"findings":[],"srcNet":0,"autofixed":false}
+{"ts":"2026-06-20T06:14:56.213Z","base":"6ce08039ccceee9144df3a38697ed18a6d12c7e6","head":"c381b4aebd20be2da423a78822857973574fff8f","pr":18,"findings":[{"id":"sensitive-paths","sev":"medium","conf":"high"},{"id":"unlogged-files","sev":"low","conf":"low"}],"srcNet":0,"autofixed":false}
