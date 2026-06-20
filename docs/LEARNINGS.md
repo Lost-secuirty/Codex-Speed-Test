@@ -10,6 +10,17 @@ evergreen rules into `GOLDEN_RULES.md` via a Scott-reviewed PR.
 > still-biting rules are condensed under **Durable rules** at the bottom of this
 > file. Grep both files when chasing a module's history.
 
+## 2026-06-20 — CI-state literacy; the action_required held audit bot-commit (PR #21)
+
+New governance doc: `docs/CI_AND_LIVE_STATE.md` — the CI-status taxonomy + the
+live-state check. This repo's defining CI trait, seen live on PR #21: the Drift
+Audit (`audit.yml`, `contents: write`) auto-pushes an `audit: auto-fix + history`
+commit that moves the PR head off your commit; its GITHUB_TOKEN-authored runs are
+held `action_required` ("Approve workflows to run") — an intended gate, not a
+failure (the `actor != github-actions[bot]` guard then self-skips the audit on the
+bot commit, so it does not loop). Always check: is the PR head still my commit, or
+did a bot move it?
+
 ## 2026-06-13
 
 - **Slot-bundle salvage → durable storage + a determinism gate (ADR-0022).** Swept
