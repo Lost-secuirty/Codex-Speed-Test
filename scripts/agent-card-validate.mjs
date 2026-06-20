@@ -10,7 +10,18 @@ import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-const KEBAB = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+// kebab-case check without a nested-quantifier regex (ReDoS-safe, and the input is a
+// trusted committed card anyway): a single char-class pass plus explicit boundary rules.
+const KEBAB_CHARS = /^[a-z0-9-]+$/;
+function isKebabCase(s) {
+  return (
+    typeof s === 'string' &&
+    KEBAB_CHARS.test(s) &&
+    !s.startsWith('-') &&
+    !s.endsWith('-') &&
+    !s.includes('--')
+  );
+}
 
 // Read `agent_interop_phase` from STATUS.md's YAML front-matter without a YAML dependency.
 export function parsePhase(statusText) {
@@ -42,7 +53,7 @@ export function validateAgentSurface({ card, tools, phase }) {
     'card.skills must be a non-empty array',
   );
   for (const [i, s] of (Array.isArray(card?.skills) ? card.skills : []).entries()) {
-    req(typeof s?.id === 'string' && KEBAB.test(s.id), `skill[${i}].id missing or not kebab-case`);
+    req(isKebabCase(s?.id), `skill[${i}].id missing or not kebab-case`);
     req(typeof s?.name === 'string' && s.name.length > 0, `skill[${i}].name missing`);
     req(
       typeof s?.description === 'string' && s.description.length > 0,
